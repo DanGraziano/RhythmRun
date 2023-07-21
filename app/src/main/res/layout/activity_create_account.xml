@@ -6,4 +6,132 @@
     android:layout_height="match_parent"
     tools:context=".CreateAccount">
 
+<TextView
+    android:id="@+id/accountIntroText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Let's get started"
+    android:textSize="26sp"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.042" />
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/lastNameInputLayout"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:hint="Last Name"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.506"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/firstNameInputLayout"
+    app:layout_constraintVertical_bias="0.050000012"
+    app:startIconDrawable="@drawable/person_outline">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputLastName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</com.google.android.material.textfield.TextInputLayout>
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/firstNameInputLayout"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:hint="First Name"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.506"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/accountIntroText"
+    app:layout_constraintVertical_bias="0.117"
+    app:startIconDrawable="@drawable/person_outline">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputFirstName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</com.google.android.material.textfield.TextInputLayout>
+
+<Button
+    android:id="@+id/logInBtn"
+    style="@style/Widget.AppCompat.Button.Borderless"
+    android:layout_width="98dp"
+    android:layout_height="48dp"
+    android:text="Log in"
+    android:textAppearance="@style/TextAppearance.AppCompat.Small"
+    android:textColor="@android:color/darker_gray"
+    android:textStyle="bold"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.498"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/textView4"
+    app:layout_constraintVertical_bias="0.0" />
+
+<TextView
+    android:id="@+id/textView4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Already have an account?"
+    android:textColor="@android:color/darker_gray"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/createAccountBtn"
+    app:layout_constraintVertical_bias="0.27" />
+
+<com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/usernameInputLayout"
+    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:hint="Email address"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.506"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/lastNameInputLayout"
+    app:layout_constraintVertical_bias="0.050000012"
+    app:startIconDrawable="@drawable/person_outline">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/inputUsername"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</com.google.android.material.textfield.TextInputLayout>
+
+<Button
+    android:id="@+id/createAccountBtn"
+    style="@style/Widget.AppCompat.Button.Colored"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:text="Create an account"
+    app:backgroundTint="#FF044CDD"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.506"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/usernameInputLayout"
+    app:layout_constraintVertical_bias="0.050000012" />
+
+<TextView
+    android:id="@+id/accountIntroText2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Create an account to start tracking"
+    android:textColor="@android:color/darker_gray"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.496"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/accountIntroText"
+    app:layout_constraintVertical_bias="0.005" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

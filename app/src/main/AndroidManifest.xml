@@ -25,7 +25,7 @@
             android:name=".Settings"
             android:exported="false" />
         <activity
-            android:name=".BeginWorkout"
+            android:name=".StartWorkout"
             android:exported="false" />
         <activity
             android:name=".CreateAccount"

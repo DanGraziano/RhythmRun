@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "372383698260",
+    "project_id": "rhythmrun-6b54e",
+    "storage_bucket": "rhythmrun-6b54e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372383698260:android:35d1d76019cd04a0514cc1",
+        "android_client_info": {
+          "package_name": "edu.northeastern.rhythmrun"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372383698260-5pghksieh329h4nltailmte4pl18ukgp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMS-rciUM7bXolPd81X17G6AvUrd80eoY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372383698260-5pghksieh329h4nltailmte4pl18ukgp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

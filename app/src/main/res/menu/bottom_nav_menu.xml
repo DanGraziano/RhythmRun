@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/homeNav"
+        android:title="Home"
+        android:icon="@drawable/home_icon" />
+
+    <item android:id="@+id/startWorkoutText"
+        android:title="Start Workout" />
+
+    <item android:id="@+id/settingsNav"
+        android:title="Settings"
+        android:icon="@drawable/settings_icon" />
+</menu>

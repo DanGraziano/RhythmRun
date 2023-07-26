@@ -9,7 +9,9 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Settings">
+        tools:context=".Settings"
+        tools:layout_editor_absoluteX="170dp"
+        tools:layout_editor_absoluteY="16dp">
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
@@ -42,6 +44,12 @@
             app:fabCustomSize="64dp"
             app:layout_anchor="@id/bottomAppBar"
             app:maxImageSize="64dp" />
+
+        <Button
+            android:id="@+id/logoutbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Log out" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -12,6 +12,8 @@ import android.widget.ImageView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +27,8 @@ public class Home extends AppCompatActivity {
 	ArrayList<RunModel> runsList = new ArrayList<>();
 	RecyclerView recyclerView;
 	ImageView profileImage;
+	FloatingActionButton fabButton;
+	BottomNavigationView bottomNavigationView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +37,29 @@ public class Home extends AppCompatActivity {
 
 		RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
 		profileImage = findViewById(R.id.profileImage);
-		//profileImage.setImageResource(R.drawable.default_image);
 
+		// set up run history history.
 		setupRunModels();
+
+		FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+		if (currentUser != null) {
+			// User is signed in
+			String uid = currentUser.getUid(); // Get the user's unique ID
+			String displayName = currentUser.getDisplayName(); // Get the user's display name
+			String email = currentUser.getEmail(); // Get the user's email address
+			// You can access other user information as needed
+
+			Log.d("HomeActivity", "User ID: " + uid);
+			Log.d("HomeActivity", "Display Name: " + displayName);
+			Log.d("HomeActivity", "Email: " + email);
+		} else {
+			// User is not signed in
+			// Redirect the user to the sign-in page or handle the situation accordingly
+		}
 
 
 		// KEEP -- Used for floating action button on click
-		FloatingActionButton fabButton = findViewById(R.id.startWorkoutFab);
+		fabButton = findViewById(R.id.startWorkoutFab);
 		fabButton.setOnClickListener(v -> {
 			// Open the Workout activity when FAB is clicked
 			Intent intent = new Intent(Home.this, StartWorkout.class);
@@ -48,7 +68,12 @@ public class Home extends AppCompatActivity {
 
 
 		// KEEP -- Used for bottom navigation bar on click
-		BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+		bottomNavigationView = findViewById(R.id.bottomNavigationView);
+		setupNavBar();
+
+	}
+
+	private void setupNavBar(){
 		bottomNavigationView.setOnItemSelectedListener(
 				(item) -> {
 					// Open Home screen on click
@@ -67,7 +92,6 @@ public class Home extends AppCompatActivity {
 		// KEEP -- Used for bottom navigation bar appearance and functionality
 		bottomNavigationView.setBackground(null); // Set background to null to make it transparent
 		bottomNavigationView.getMenu().getItem(1).setEnabled(false); // Disable the second menu item
-
 	}
 
 	private void setupRunModels() {

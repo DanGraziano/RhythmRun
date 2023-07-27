@@ -19,6 +19,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -102,6 +103,9 @@ public class CreateAccount extends AppCompatActivity {
 					// current currentUser
 					FirebaseUser currentUser = auth.getCurrentUser();
 
+					UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(firstName).build();
+					currentUser.updateProfile(profileChangeRequest);
+
 					// Create currentUser in Realtime DB
 					CreateUserInDB createUserInDB = new CreateUserInDB(firstName,email,password);
 
@@ -121,7 +125,7 @@ public class CreateAccount extends AppCompatActivity {
 								currentUser.sendEmailVerification();
 
 								// Prevent currentUser from clicking back after successful registration
-								Intent intent = new Intent(CreateAccount.this, Home.class);
+								Intent intent = new Intent(CreateAccount.this, Login.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK
 										| Intent.FLAG_ACTIVITY_NEW_TASK);
 

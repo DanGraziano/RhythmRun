@@ -36,12 +36,12 @@
 
             <!-- Another text view to the right of the welcome text -->
             <TextView
-                android:id="@+id/anotherTextView"
+                android:id="@+id/userName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:text="Another Text"
+                android:text="Username"
                 android:textSize="16sp" />
 
 

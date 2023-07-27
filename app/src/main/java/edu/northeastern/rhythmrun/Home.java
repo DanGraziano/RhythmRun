@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,14 +31,24 @@ public class Home extends AppCompatActivity {
 	ImageView profileImage;
 	FloatingActionButton fabButton;
 	BottomNavigationView bottomNavigationView;
+	TextView username;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 
+		username = findViewById(R.id.userName);
 		RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
 		profileImage = findViewById(R.id.profileImage);
+
+		profileImage.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Home.this, ChangeProfilePicture.class);
+				startActivity(intent);
+			}
+		});
 
 		// set up run history history.
 		setupRunModels();
@@ -46,15 +58,7 @@ public class Home extends AppCompatActivity {
 			// User is signed in
 			String uid = currentUser.getUid(); // Get the user's unique ID
 			String displayName = currentUser.getDisplayName(); // Get the user's display name
-			String email = currentUser.getEmail(); // Get the user's email address
-			// You can access other user information as needed
-
-			Log.d("HomeActivity", "User ID: " + uid);
-			Log.d("HomeActivity", "Display Name: " + displayName);
-			Log.d("HomeActivity", "Email: " + email);
-		} else {
-			// User is not signed in
-			// Redirect the user to the sign-in page or handle the situation accordingly
+			username.setText(displayName);
 		}
 
 

@@ -12,4 +12,8 @@ public class CreateUserInDB {
         this.password = password;
     }
 
+    public CreateUserInDB(){
+
+    }
+
 }

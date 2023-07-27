@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -32,6 +34,7 @@ public class Home extends AppCompatActivity {
 	FloatingActionButton fabButton;
 	BottomNavigationView bottomNavigationView;
 	TextView username;
+	FirebaseUser currentUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +56,13 @@ public class Home extends AppCompatActivity {
 		// set up run history history.
 		setupRunModels();
 
-		FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+		 currentUser = FirebaseAuth.getInstance().getCurrentUser();
 		if (currentUser != null) {
 			// User is signed in
 			String uid = currentUser.getUid(); // Get the user's unique ID
 			String displayName = currentUser.getDisplayName(); // Get the user's display name
 			username.setText(displayName);
+			showUserProfile(currentUser);
 		}
 
 
@@ -76,6 +80,33 @@ public class Home extends AppCompatActivity {
 		setupNavBar();
 
 	}
+
+	private void showUserProfile(FirebaseUser firebaseUser){
+		String userId = firebaseUser.getUid();
+
+		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+		reference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot snapshot) {
+				CreateUserInDB user = snapshot.getValue(CreateUserInDB.class);
+
+				if(user != null){
+					// external picture uses Picasso
+					Uri uri = currentUser.getPhotoUrl();
+					Picasso picasso = Picasso.get();
+					picasso.load(uri).into(profileImage);
+
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError error) {
+
+			}
+		});
+
+	}
+
 
 	private void setupNavBar(){
 		bottomNavigationView.setOnItemSelectedListener(

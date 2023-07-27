@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -50,6 +51,7 @@ public class ChangeProfilePicture extends AppCompatActivity {
 
         userProfile = FirebaseAuth.getInstance();
         user = userProfile.getCurrentUser();
+        Log.d("IN CHANGE PIC ACT", String.valueOf(user));
         storageReference = FirebaseStorage.getInstance().getReference("ProfilePics");
 
         Uri uri = user.getPhotoUrl();
@@ -93,50 +95,31 @@ public class ChangeProfilePicture extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get the download URL of the uploaded image
-                        profilePicRef.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
-                            public void onComplete(@NonNull Task<Uri> task) {
-                                if (task.isSuccessful()) {
-                                    Uri downloadUri = task.getResult();
-                                    // Update the user's profile picture URL in Firebase Authentication
-                                    user.updateProfile(new UserProfileChangeRequest.Builder()
-                                                    .setPhotoUri(downloadUri)
-                                                    .build())
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    progressBar.setVisibility(View.GONE);
-                                                    if (task.isSuccessful()) {
-                                                        // Profile picture updated successfully
-                                                        // You may show a success message to the user
-                                                    } else {
-                                                        // Profile picture update failed
-                                                        // You may show an error message to the user
-                                                    }
-                                                }
-                                            });
-                                } else {
-                                    progressBar.setVisibility(View.GONE);
-                                    // Handle the case when getting the download URL fails
-                                    // You may show an error message to the user
-                                }
+                            public void onSuccess(Uri uri) {
+                                Uri downloadUri = uri;
+                                user = userProfile.getCurrentUser();
+                                UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setPhotoUri(downloadUri).build();
+                                user.updateProfile(profileChangeRequest);
                             }
                         });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
                         progressBar.setVisibility(View.GONE);
-                        // Handle the case when the image upload fails
-                        // You may show an error message to the user
+
+                        Intent intent = new Intent(ChangeProfilePicture.this, Home.class);
+
+                        startActivity(intent);
+                        finish();
+
                     }
                 });
+
     }
 
     private String getFileExtension(Uri imageUri) {
         ContentResolver cr = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(imageUri));
     }
 
     @Override

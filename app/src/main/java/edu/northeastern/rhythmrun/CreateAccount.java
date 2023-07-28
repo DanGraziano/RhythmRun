@@ -25,8 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class CreateAccount extends AppCompatActivity {
 
-	private TextInputEditText inputEmail, inputFirstName, inputPassword;
-	private TextInputLayout emailInputLayout, firstNameInputLayout, passwordInputLayout;
+	private TextInputEditText inputEmail, inputFirstName, inputLastName, inputAge, weightInput, inputHeight, inputPassword;
+	private TextInputLayout emailInputLayout, firstNameInputLayout, lastNameInputLayout, ageInputLayout,heightInputLayout, weightInputLayout, passwordInputLayout;
 	private Button createAccountBtn, logInBtn;
 
 	@Override
@@ -38,11 +38,21 @@ public class CreateAccount extends AppCompatActivity {
 		inputEmail = findViewById(R.id.inputEmail);
 		inputFirstName = findViewById(R.id.inputFirstName);
 		inputPassword = findViewById(R.id.inputPassword);
+		inputLastName = findViewById(R.id.inputLastName);
+		inputAge = findViewById(R.id.inputAge);
+		weightInput = findViewById(R.id.weightInput);
+		inputHeight = findViewById(R.id.inputHeight);
 		// TODO add differnt views such as username, height, weight, confirm password etc.
 		// input layouts
 		emailInputLayout = findViewById(R.id.emailInputLayout);
 		firstNameInputLayout = findViewById(R.id.firstNameInputLayout);
 		passwordInputLayout = findViewById(R.id.passwordInputLayout);
+		lastNameInputLayout = findViewById(R.id.lastNameInputLayout);
+		ageInputLayout = findViewById(R.id.ageInputLayout);
+		heightInputLayout = findViewById(R.id.heightInputLayout);
+		weightInputLayout = findViewById(R.id.weightInputLayout);
+
+
 
 		createAccountBtn = findViewById(R.id.createAccountBtn);
 		logInBtn = findViewById(R.id.logInBtn);
@@ -60,6 +70,11 @@ public class CreateAccount extends AppCompatActivity {
 		String email = inputEmail.getText().toString();
 		String firstName = inputFirstName.getText().toString();
 		String password = inputPassword.getText().toString();
+		String lastname = inputLastName.getText().toString();
+		String age = inputAge.getText().toString();
+		String weight = weightInput.getText().toString();
+		String height = inputHeight.getText().toString();
+
 
 		if (TextUtils.isEmpty(email)) {
 			// Handle empty email
@@ -86,13 +101,33 @@ public class CreateAccount extends AppCompatActivity {
 			passwordInputLayout.setError("Password is Required");
 			passwordInputLayout.requestFocus();
 		}
+		else if (TextUtils.isEmpty(age)) {
+			// Handle empty age
+			Toast.makeText(this, "Please enter your age", Toast.LENGTH_SHORT).show();
+			passwordInputLayout.setError("Age is Required");
+			passwordInputLayout.requestFocus();
+		}
+		else if (TextUtils.isEmpty(weight)) {
+			// Handle empty age
+			Toast.makeText(this, "Please enter your weight", Toast.LENGTH_SHORT).show();
+			passwordInputLayout.setError("Weight is Required");
+			passwordInputLayout.requestFocus();
+		}
+
+		else if (TextUtils.isEmpty(height)) {
+			// Handle empty age
+			Toast.makeText(this, "Please enter your height", Toast.LENGTH_SHORT).show();
+			passwordInputLayout.setError("Height is Required");
+			passwordInputLayout.requestFocus();
+		}
+
 		else {
-			registerUser(firstName,email,password);
+			registerUser(firstName, lastname, age, height, weight, email, password);
 		}
 
 	}
 
-	private void registerUser(String firstName, String email, String password) {
+	private void registerUser(String firstName, String lastname, String age, String height, String weight, String email, String password) {
 		FirebaseAuth auth = FirebaseAuth.getInstance();
 		// creates authorization instance in firebase
 		auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -107,7 +142,7 @@ public class CreateAccount extends AppCompatActivity {
 					currentUser.updateProfile(profileChangeRequest);
 
 					// Create currentUser in Realtime DB
-					CreateUserInDB createUserInDB = new CreateUserInDB(firstName,email,password);
+					CreateUserInDB createUserInDB = new CreateUserInDB(firstName,lastname,age,height,weight,email,password);
 
 					DatabaseReference allUsersRegistered = FirebaseDatabase.getInstance().getReference("Users");
 

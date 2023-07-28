@@ -36,6 +36,10 @@ public class Home extends AppCompatActivity {
 	TextView username;
 	FirebaseUser currentUser;
 
+	// TODO Make Recycler clickable and new activity
+	// TODO Change Runs DB and create another collection mapping table
+	// TODO Achievements? OR Filters for run
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,6 +66,7 @@ public class Home extends AppCompatActivity {
 			String uid = currentUser.getUid(); // Get the user's unique ID
 			String displayName = currentUser.getDisplayName(); // Get the user's display name
 			username.setText(displayName);
+			// for when info changes regarding a user
 			showUserProfile(currentUser);
 		}
 

@@ -41,16 +41,28 @@ public class Login extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = authProfile.getCurrentUser();
+
         if(currentUser != null){
-            Log.d("CURRENT USER ", "logged in on start");
-            Intent intent = new Intent(Login.this, Home.class);
-            startActivity(intent);
+            boolean emailVerified = checkIfEmailVerified(currentUser);
+            if(emailVerified) {
+                Log.d("CURRENT USER ", "logged in on start");
+                Intent intent = new Intent(Login.this, Home.class);
+                startActivity(intent);
+            }
         } else {
             Log.d("CURRENT USER ", " NOT !! logged in on start");
         }
     }
 
-
+    private boolean checkIfEmailVerified(FirebaseUser user) {
+        boolean flag = false;
+        if(!user.isEmailVerified()){
+            flag = false;
+        } else {
+            flag = true;
+        }
+        return flag;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

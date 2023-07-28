@@ -7,21 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".Home">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center_horizontal"
-            android:paddingTop="25dp">
+            android:paddingTop="15dp"
+            >
 
             <ImageView
                 android:id="@+id/profileImage"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:src="@drawable/person_outline"
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -32,7 +30,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:text="Welcome"
-                android:textSize="16sp" />
+                android:textSize="30sp" />
 
             <!-- Another text view to the right of the welcome text -->
             <TextView
@@ -42,7 +40,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:text="Username"
-                android:textSize="16sp" />
+                android:textSize="30sp" />
 
 
             <View
@@ -53,20 +51,14 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="#03A9F4"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
-
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="My Runs" />
+                android:textSize="30sp"
+                android:textAlignment="center"
+                android:text="Run History" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/runHistoryRecy"
@@ -78,15 +70,9 @@
                 android:layout_marginBottom="8dp" />
 
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
-    </ScrollView>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"

@@ -21,10 +21,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Home extends AppCompatActivity {
 
@@ -57,8 +59,6 @@ public class Home extends AppCompatActivity {
 			}
 		});
 
-		// set up run history history.
-		setupRunModels();
 
 		 currentUser = FirebaseAuth.getInstance().getCurrentUser();
 		if (currentUser != null) {
@@ -70,6 +70,8 @@ public class Home extends AppCompatActivity {
 			showUserProfile(currentUser);
 		}
 
+		// set up run history history.
+		setupRunModels();
 
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
@@ -83,6 +85,10 @@ public class Home extends AppCompatActivity {
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
 		setupNavBar();
+
+		// testing the db
+		//printUserKeys();
+
 
 	}
 
@@ -99,7 +105,14 @@ public class Home extends AppCompatActivity {
 					// external picture uses Picasso
 					Uri uri = currentUser.getPhotoUrl();
 					Picasso picasso = Picasso.get();
-					picasso.load(uri).into(profileImage);
+					picasso.load(uri)
+							.placeholder(R.drawable.person_outline) // Use your placeholder image drawable here
+							.error(R.drawable.person_outline) // Use your error image drawable here
+							.into(profileImage);
+
+					//picasso.load(uri).into(profileImage);
+
+
 
 				}
 			}
@@ -110,6 +123,39 @@ public class Home extends AppCompatActivity {
 			}
 		});
 
+	}
+
+
+	private void printUserKeys() {
+
+		String userUid = currentUser.getUid();
+
+		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("UserRunsMapping");
+
+		Query userRunsQuery = userRunsRef.orderByChild("user").equalTo(userUid);
+
+		userRunsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				if (dataSnapshot.exists()) {
+					for (DataSnapshot userRunSnapshot : dataSnapshot.getChildren()) {
+						// Get the HashMap representing the user run data
+						HashMap<String, Object> userRunData = (HashMap<String, Object>) userRunSnapshot.getValue();
+
+						// Get the value of the "user" field (assuming "user" is a key in the HashMap)
+						String userKey = (String) userRunData.get("run");
+						Log.d("RUN IN PRINT ", userKey);
+					}
+				} else {
+					Log.d("USER_KEY", "No users found in UserRunsMapping");
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				// Handle errors if needed
+			}
+		});
 	}
 
 
@@ -135,50 +181,78 @@ public class Home extends AppCompatActivity {
 	}
 
 	private void setupRunModels() {
-		DatabaseReference runsRef = FirebaseDatabase.getInstance().getReference("Runs");
-		runsRef.orderByChild("date") // Order the runs by date
-				.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						if (dataSnapshot.exists()) {
-							for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-								Object dateValue = snapshot.child("date").getValue();
-								Object distanceValue = snapshot.child("distance").getValue();
-								Object cadenceTimeValue = snapshot.child("cadenceTime").getValue();
-								Object paceValue = snapshot.child("pace").getValue();
-								Object caloriesValue = snapshot.child("calories").getValue();
-								Object timeValue = snapshot.child("time").getValue();
 
+		if (currentUser == null) {
+			// User is not logged in, handle the case appropriately
+			return;
+		}
 
-								String date = dateValue != null ? dateValue.toString() : "";
-								String distance = distanceValue != null ? distanceValue.toString() : "";
-								String cadenceTime = cadenceTimeValue != null ? cadenceTimeValue.toString() : "";
-								String pace = paceValue != null ? paceValue.toString() : "";
-								String calories = caloriesValue != null ? caloriesValue.toString() : "";
-								String time = timeValue != null ? timeValue.toString() : "";
+		String userUid = currentUser.getUid();
+		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("UserRunsMapping");
+		Query userRunsQuery = userRunsRef.orderByChild("user").equalTo(userUid);
 
+		userRunsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				// Clear the list before adding new items to avoid duplication
+				runsList.clear();
 
-								// Add the RunModel to the runsList
-								RunModel run = new RunModel(date, distance, cadenceTime, pace, calories, time);
-								runsList.add(run);
+				if (dataSnapshot.exists()) {
+					for (DataSnapshot userRunSnapshot : dataSnapshot.getChildren()) {
+						HashMap<String, Object> userRunData = (HashMap<String, Object>) userRunSnapshot.getValue();
+
+						// Get the value of the "user" field (assuming "user" is a key in the HashMap)
+						String runId = (String) userRunData.get("run");
+
+						// Query the "Runs" table to get details of the current run
+						DatabaseReference runsRef = FirebaseDatabase.getInstance().getReference("Runs")
+								.child(runId);
+						runsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(@NonNull DataSnapshot runSnapshot) {
+								if (runSnapshot.exists()) {
+									// Fetch the run details from the snapshot
+									Log.d("Inside run snapshot", String.valueOf(runSnapshot));
+									String date = String.valueOf(runSnapshot.child("date").getValue());
+									String distance = String.valueOf(runSnapshot.child("distance").getValue());
+									String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
+									String pace = String.valueOf(runSnapshot.child("pace").getValue());
+									String calories = String.valueOf(runSnapshot.child("calories").getValue());
+									String time = String.valueOf(runSnapshot.child("time").getValue());
+
+									// Add the RunModel to the runsList
+									RunModel run = new RunModel(date, distance, cadenceTime, pace, calories, time);
+									runsList.add(run);
+
+									// Update the RecyclerView after fetching all runs
+									if (runsList.size() == dataSnapshot.getChildrenCount()) {
+										RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
+										recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
+										RunAdapter runAdapter = new RunAdapter(runsList);
+										recyclerView.setAdapter(runAdapter);
+									}
+								}
 							}
 
-							// After fetching the data, set up the RecyclerView
-							RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
-							recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
-							RunAdapter runAdapter = new RunAdapter(runsList);
-							recyclerView.setAdapter(runAdapter);
-						} else {
-							// Handle the case when there is no data in the "Runs" node
-						}
+							@Override
+							public void onCancelled(@NonNull DatabaseError databaseError) {
+								// Handle errors if needed
+							}
+						});
 					}
+				} else {
+					// Handle the case when there are no runs associated with the user
+					// For example, you can show a message to the user or hide the RecyclerView
+				}
+			}
 
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-						// Handle any errors that occurred during the database operation
-					}
-				});
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				// Handle errors if needed
+			}
+		});
 	}
+
 
 
 

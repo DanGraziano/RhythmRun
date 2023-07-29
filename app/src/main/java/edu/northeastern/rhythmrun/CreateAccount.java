@@ -56,11 +56,8 @@ public class CreateAccount extends AppCompatActivity {
 		createAccountBtn = findViewById(R.id.createAccountBtn);
 		logInBtn = findViewById(R.id.logInBtn);
 
-		createAccountBtn.setOnClickListener(v -> {
-
-			checkUserInputs();
-
-		});
+		logInBtn.setOnClickListener(v-> startActivity(new Intent(CreateAccount.this, Login.class)));
+		createAccountBtn.setOnClickListener(v -> checkUserInputs());
 
 	}
 

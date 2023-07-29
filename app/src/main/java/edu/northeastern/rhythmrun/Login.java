@@ -34,6 +34,8 @@ public class Login extends AppCompatActivity {
     private FirebaseAuth authProfile;
     private TextInputEditText emailInput, passwordInput;
 
+    private Button forgotPwBtn;
+
 
 
     @Override
@@ -69,25 +71,24 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
-         emailInput = findViewById(R.id.inputEmailText);
-         passwordInput = findViewById(R.id.inputPasswordText);
-
+        emailInput = findViewById(R.id.inputEmailText);
+        passwordInput = findViewById(R.id.inputPasswordText);
+        forgotPwBtn = findViewById(R.id.forgotPwBtn);
         authProfile = FirebaseAuth.getInstance();
+
+
 
         // On sign in button click
         Button signInBtn = findViewById(R.id.signInBtn);
-        signInBtn.setOnClickListener(v -> {
-            checkUserInputs();
-            }
-        );
+        signInBtn.setOnClickListener(v -> checkUserInputs());
 
+
+        // forgot pw
+        forgotPwBtn.setOnClickListener(v -> startActivity(new Intent(Login.this, ForgotPassword.class)));
 
         // Open sign up page from button click
         Button signUpBtn = findViewById(R.id.signUpBtn);
-        signUpBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(Login.this, CreateAccount.class);
-            startActivity(intent);
-        });
+        signUpBtn.setOnClickListener(v -> startActivity(new Intent(Login.this, CreateAccount.class)));
     }
 
     private void checkUserInputs() {

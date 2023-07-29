@@ -42,7 +42,6 @@ public class CreateAccount extends AppCompatActivity {
 		inputAge = findViewById(R.id.inputAge);
 		weightInput = findViewById(R.id.weightInput);
 		inputHeight = findViewById(R.id.inputHeight);
-		// TODO add differnt views such as username, height, weight, confirm password etc.
 		// input layouts
 		emailInputLayout = findViewById(R.id.emailInputLayout);
 		firstNameInputLayout = findViewById(R.id.firstNameInputLayout);

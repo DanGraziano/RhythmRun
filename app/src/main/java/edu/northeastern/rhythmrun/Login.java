@@ -180,5 +180,4 @@ public class Login extends AppCompatActivity {
 
 }
 
-// TODO figure our how to make password visable or hidden
-// TODO forgot pw link ?
+// TODO figure our how to make password visible or hidden

@@ -39,6 +39,9 @@ public class Home extends AppCompatActivity {
 	FirebaseUser currentUser;
 
 	// TODO Make Recycler clickable and new activity
+	// TODO Make nicer color and text the group will need to decide that
+	// TODO maybe a on hoover listener for badges to give user context
+	// TODO maybe add a loading spinner to make transitions nicer
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -13,6 +13,7 @@ import android.graphics.Camera;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -47,9 +48,11 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 	float[] listCoordinates = new float[20];
 	//Google Map API related variables
 	private GoogleMap gMap;
+
+	private Button startBtn;
+
 	private double currentLong, currentLat;
 	private LatLng currentCoord;
-
 	private Boolean isFirstPull = true;
 	//Used for system permissions
 	private static final int RECORD_REQUEST_CODE = 101;
@@ -78,6 +81,7 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 
 		//Callback for requestLocationUpdates
 		locationCallBack = new LocationCallback() {
+			//Location callback consistently checks for position and updates the mapFragement once
 			@Override
 			public void onLocationResult(@NonNull LocationResult locationResult) {
 				super.onLocationResult(locationResult);
@@ -86,10 +90,6 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 					setStartingLocation(currentCoord);
 					isFirstPull = false;
 				}
-				else{
-					//Do something else
-				}
-				Log.d("Coordinates",String.valueOf(locationResult.getLastLocation()));
 			}
 		};
 
@@ -101,6 +101,11 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 		mapFragment.getMapAsync(this);
 
 		//Buttons and OnClickListeners
+
+		startBtn = findViewById(R.id.startRunBtn);
+
+		startBtn.setOnClickListener(v -> {startActiveWorkout();});
+
 		// KEEP -- Used for floating action button on click
 		FloatingActionButton fabButton = findViewById(R.id.startWorkoutFab);
 		fabButton.setOnClickListener(v -> {
@@ -131,12 +136,19 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 		bottomNavigationView.getMenu().getItem(1).setEnabled(false); // Disable the second menu item
 	}
 
+	//GoogleMap Override that updates the map
 	@Override
 	public void onMapReady(@NonNull GoogleMap googleMap) {
 		gMap = googleMap;
 		LatLng currentCoord = new LatLng(currentLat,currentLong);
 		Log.d("onMapReady",String.valueOf(currentCoord));
 		gMap.moveCamera(CameraUpdateFactory.newLatLng(currentCoord));
+	}
+
+	//Creates intent for ActiveWorkout
+	private void startActiveWorkout(){
+		Intent intent = new Intent(this, ActiveWorkout.class);
+		startActivity(intent);
 	}
 
 	//getUserPermission for location services
@@ -187,22 +199,24 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 			}
 		});
 	}
+
+	//Starts GPS callback which will consistently update the position of the user.
 	@SuppressLint("MissingPermission")
 	private void startGPSUpdates(){
 		fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack,null);
 	}
 
+	// attains the coordinates and sets the activity level variables accordingly
 	private void getCoordinates(Location location){
 		currentLong = location.getLongitude();
 		currentLat = location.getLatitude();
 		currentCoord = new LatLng(currentLat,currentLong);
 	}
 
+	//Updates the map to the current location and adds a marker at set position
 	private void setStartingLocation(LatLng coordinates){
 		gMap.addMarker(new MarkerOptions().position(coordinates).title("Start"));
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates,18));
 	}
-
-
 }
 

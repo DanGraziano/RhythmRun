@@ -32,7 +32,7 @@ public class Home extends AppCompatActivity {
 
 	ArrayList<RunModel> runsList = new ArrayList<>();
 	RecyclerView recyclerView;
-	ImageView profileImage;
+	ImageView profileImage, oneMileRun, threeMileRun, fiveKRun, tenKRun, fityMileRun;
 	FloatingActionButton fabButton;
 	BottomNavigationView bottomNavigationView;
 	TextView username;
@@ -48,8 +48,14 @@ public class Home extends AppCompatActivity {
 		setContentView(R.layout.activity_home);
 
 		username = findViewById(R.id.userName);
-		RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
+		recyclerView = findViewById(R.id.runHistoryRecy);
 		profileImage = findViewById(R.id.profileImage);
+		oneMileRun = findViewById(R.id.oneMileBadge);
+		threeMileRun = findViewById(R.id.threeMileBadge);
+		fiveKRun = findViewById(R.id.fiveKBadge);
+		tenKRun = findViewById(R.id.tenKBadge);
+		fityMileRun = findViewById(R.id.fiftyMileBadge);
+
 
 		profileImage.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -180,6 +186,72 @@ public class Home extends AppCompatActivity {
 		bottomNavigationView.getMenu().getItem(1).setEnabled(false); // Disable the second menu item
 	}
 
+	public void checkAndSetBadgeVisibilityOneMile(String distance) {
+		try {
+			double distanceInMiles = Double.parseDouble(distance);
+			if (distanceInMiles >=1 && distanceInMiles < 3 ) {
+				oneMileRun.setAlpha(1.0f);
+			}
+		} catch (NumberFormatException e) {
+			oneMileRun.setAlpha(0.15f);
+		}
+	}
+
+	public void checkAndSetBadgeVisibilityThreeMile(String distance) {
+		try {
+			double distanceInMiles = Double.parseDouble(distance);
+			if (distanceInMiles >= 3.0 && distanceInMiles < 3.1) {
+				threeMileRun.setAlpha(1.0f);
+			}
+		} catch (NumberFormatException e) {
+			threeMileRun.setAlpha(0.15f);
+		}
+	}
+
+	public void checkAndSetBadgeVisibility5K(String distance) {
+		try {
+			double distanceInMiles = Double.parseDouble(distance);
+			if (distanceInMiles >= 3.1 && distanceInMiles < 6.2) {
+				fiveKRun.setAlpha(1.0f);
+			}
+		} catch (NumberFormatException e) {
+			fiveKRun.setAlpha(0.15f);
+		}
+	}
+
+	public void checkAndSetBadgeVisibility10K(String distance) {
+		try {
+			double distanceInMiles = Double.parseDouble(distance);
+			if (distanceInMiles >= 6.2 && distanceInMiles < 50) {
+				tenKRun.setAlpha(1.0f);
+			}
+		} catch (NumberFormatException e) {
+			tenKRun.setAlpha(0.15f);
+		}
+	}
+
+	public void checkAndSetBadgeVisibility50K(String distance) {
+		try {
+			double distanceInMiles = Double.parseDouble(distance);
+			if (distanceInMiles >= 50) {
+				fityMileRun.setAlpha(1.0f);
+			}
+		} catch (NumberFormatException e) {
+			fityMileRun.setAlpha(0.15f);
+		}
+	}
+
+
+	public void checkBadgeSystem(String distance) {
+		// Check and set visibility for the badges one by one
+		checkAndSetBadgeVisibilityOneMile(distance);
+		checkAndSetBadgeVisibilityThreeMile(distance);
+		checkAndSetBadgeVisibility5K(distance);
+		checkAndSetBadgeVisibility10K(distance);
+		checkAndSetBadgeVisibility50K(distance);
+	}
+
+
 	private void setupRunModels() {
 
 		if (currentUser == null) {
@@ -215,6 +287,7 @@ public class Home extends AppCompatActivity {
 									Log.d("Inside run snapshot", String.valueOf(runSnapshot));
 									String date = String.valueOf(runSnapshot.child("date").getValue());
 									String distance = String.valueOf(runSnapshot.child("distance").getValue());
+									checkBadgeSystem(distance);
 									String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
 									String pace = String.valueOf(runSnapshot.child("pace").getValue());
 									String calories = String.valueOf(runSnapshot.child("calories").getValue());

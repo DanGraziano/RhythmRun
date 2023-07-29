@@ -60,7 +60,7 @@
             android:textStyle="bold"
             android:layout_marginStart="10dp"
             android:textAlignment="viewStart"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
 
         <GridLayout
@@ -91,7 +91,7 @@
                 android:id="@+id/oneMileBadge"
                 android:layout_width="0dp"
                 android:layout_height="75dp"
-                android:visibility="invisible"
+                android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:src="@drawable/one_mile" />
@@ -101,7 +101,7 @@
                 android:id="@+id/threeMileBadge"
                 android:layout_width="0dp"
                 android:layout_height="75dp"
-                android:visibility="invisible"
+                android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:src="@drawable/three_mile" />
@@ -111,7 +111,7 @@
                 android:id="@+id/fiveKBadge"
                 android:layout_width="0dp"
                 android:layout_height="75dp"
-                android:visibility="invisible"
+                android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:src="@drawable/five_k" />
@@ -121,7 +121,7 @@
                 android:id="@+id/tenKBadge"
                 android:layout_width="0dp"
                 android:layout_height="75dp"
-                android:visibility="invisible"
+                android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:src="@drawable/ten_k" />
@@ -131,7 +131,7 @@
                 android:id="@+id/fiftyMileBadge"
                 android:layout_width="0dp"
                 android:layout_height="75dp"
-                android:visibility="invisible"
+                android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
                 android:src="@drawable/fifty_mile" />
@@ -147,7 +147,7 @@
             android:textStyle="bold"
             android:layout_marginStart="10dp"
             android:textAlignment="viewStart"
-            android:textSize="15sp" />
+            android:textSize="16sp" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv3"

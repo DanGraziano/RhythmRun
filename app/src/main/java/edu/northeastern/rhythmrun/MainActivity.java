@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // Open sign up page from button click
         Button signUpBtn = findViewById(R.id.signUpBtn);
         signUpBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CreateAccount.class);
+            Intent intent = new Intent(MainActivity.this, StartWorkout.class);
             startActivity(intent);
         });
     }

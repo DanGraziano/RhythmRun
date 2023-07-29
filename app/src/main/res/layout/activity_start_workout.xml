@@ -11,6 +11,16 @@
         android:layout_height="match_parent"
         tools:context=".StartWorkout">
 
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/gmap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="348dp"
+            android:layout_height="390dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"

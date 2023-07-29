@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RhythmRun</string>
+    <string name="startWorkoutTitle">Run</string>
+    <string name="Start">Start</string>
 </resources>

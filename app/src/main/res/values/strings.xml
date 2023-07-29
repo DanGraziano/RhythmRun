@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">RhythmRun</string>
+
+    <string-array name="options">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+    </string-array>
+
+    <style name="SpinnerItemStyle" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textSize">20sp</item> <!-- Set your desired text size here -->
+    </style>
+
 </resources>

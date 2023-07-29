@@ -39,8 +39,6 @@ public class Home extends AppCompatActivity {
 	FirebaseUser currentUser;
 
 	// TODO Make Recycler clickable and new activity
-	// TODO Change Runs DB and create another collection mapping table
-	// TODO Achievements? OR Filters for run
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +55,10 @@ public class Home extends AppCompatActivity {
 		fityMileRun = findViewById(R.id.fiftyMileBadge);
 
 
-		profileImage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(Home.this, ChangeProfilePicture.class);
-				startActivity(intent);
-			}
-		});
-
+		profileImage.setOnClickListener(v-> new Intent(Home.this, ChangeProfilePicture.class));
 
 		 currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 		if (currentUser != null) {
 			// User is signed in
 			String uid = currentUser.getUid(); // Get the user's unique ID
@@ -81,26 +73,16 @@ public class Home extends AppCompatActivity {
 
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
-		fabButton.setOnClickListener(v -> {
-			// Open the Workout activity when FAB is clicked
-			Intent intent = new Intent(Home.this, StartWorkout.class);
-			startActivity(intent);
-		});
-
+		fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
 		setupNavBar();
 
-		// testing the db
-		//printUserKeys();
-
-
 	}
 
 	private void showUserProfile(FirebaseUser firebaseUser){
 		String userId = firebaseUser.getUid();
-
 		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
 		reference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
@@ -118,8 +100,6 @@ public class Home extends AppCompatActivity {
 
 					//picasso.load(uri).into(profileImage);
 
-
-
 				}
 			}
 
@@ -129,39 +109,6 @@ public class Home extends AppCompatActivity {
 			}
 		});
 
-	}
-
-
-	private void printUserKeys() {
-
-		String userUid = currentUser.getUid();
-
-		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("UserRunsMapping");
-
-		Query userRunsQuery = userRunsRef.orderByChild("user").equalTo(userUid);
-
-		userRunsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				if (dataSnapshot.exists()) {
-					for (DataSnapshot userRunSnapshot : dataSnapshot.getChildren()) {
-						// Get the HashMap representing the user run data
-						HashMap<String, Object> userRunData = (HashMap<String, Object>) userRunSnapshot.getValue();
-
-						// Get the value of the "user" field (assuming "user" is a key in the HashMap)
-						String userKey = (String) userRunData.get("run");
-						Log.d("RUN IN PRINT ", userKey);
-					}
-				} else {
-					Log.d("USER_KEY", "No users found in UserRunsMapping");
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-				// Handle errors if needed
-			}
-		});
 	}
 
 
@@ -243,7 +190,6 @@ public class Home extends AppCompatActivity {
 
 
 	public void checkBadgeSystem(String distance) {
-		// Check and set visibility for the badges one by one
 		checkAndSetBadgeVisibilityOneMile(distance);
 		checkAndSetBadgeVisibilityThreeMile(distance);
 		checkAndSetBadgeVisibility5K(distance);

@@ -16,6 +16,8 @@ public class CreateUserInDB {
     public String email;
     public String password;
 
+    public String cadenceGoal;
+
 
     // for firebase
     public CreateUserInDB(){
@@ -30,5 +32,17 @@ public class CreateUserInDB {
         this.height = height;
         this.email = email;
         this.password = password;
+        this.cadenceGoal = "Beginner";
+    }
+
+    public CreateUserInDB(String firstname, String lastname, String age, String height, String weight, String email, String password, String cadenceGoal) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
+        this.weight = weight;
+        this.height = height;
+        this.email = email;
+        this.password = password;
+        this.cadenceGoal = cadenceGoal;
     }
 }

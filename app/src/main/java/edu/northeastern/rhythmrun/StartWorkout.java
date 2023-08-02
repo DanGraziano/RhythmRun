@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
@@ -14,6 +15,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -57,6 +59,10 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 	//Used for system permissions
 	private static final int RECORD_REQUEST_CODE = 101;
 
+	// Used to display GPS status to user
+	private TextView gpsStatusTextView;
+	private boolean isGpsReady = false;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +71,9 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 
 		//Prompts user for permissions
 		getUserPermissionLocation();
+
+		// Initialize TextView for GPS status
+		gpsStatusTextView = findViewById(R.id.gpsStatusTextView);
 
 		//Location Services Client
 		fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -89,6 +98,11 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 				if (isFirstPull){
 					setStartingLocation(currentCoord);
 					isFirstPull = false;
+
+					// Update TextView to show GPS signal is ready and change color from red to green
+					gpsStatusTextView.setText("GPS signal ready");
+					gpsStatusTextView.setBackgroundColor(ContextCompat.getColor(StartWorkout.this, R.color.gps_status_ready));
+					isGpsReady = true;
 				}
 			}
 		};
@@ -147,8 +161,21 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 
 	//Creates intent for ActiveWorkout
 	private void startActiveWorkout(){
-		Intent intent = new Intent(this, ActiveWorkout.class);
-		startActivity(intent);
+		if (isGpsReady) {
+			Intent intent = new Intent(this, ActiveWorkout.class);
+			startActivity(intent);
+		} else {
+			// Popup to let user know that starting workout before GPS is locked will result in inaccurate data.
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("GPS Signal Not Ready")
+					.setMessage("The GPS signal is not yet locked. Starting the workout without a strong signal may result in less accurate tracking.")
+					.setPositiveButton("Start Workout", (dialog, which) -> {
+						Intent intent = new Intent(this, ActiveWorkout.class);
+						startActivity(intent);
+					})
+					.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+					.show();
+		}
 	}
 
 	//getUserPermission for location services

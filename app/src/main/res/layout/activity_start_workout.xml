@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".StartWorkout">
 
+    <TextView
+        android:id="@+id/gpsStatusTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/gps_status_not_ready"
+        android:gravity="center"
+        android:text="GPS signal not ready"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/startRunBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.03" />
+
     <Button
         android:id="@+id/startRunBtn"
         android:layout_width="141dp"
@@ -67,17 +82,5 @@
             app:maxImageSize="64dp" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <TextView
-        android:id="@+id/startWorkoutTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/startWorkoutTitle"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

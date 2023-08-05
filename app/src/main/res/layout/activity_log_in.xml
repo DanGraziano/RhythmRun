@@ -4,7 +4,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context=".MainActivity">
+tools:context=".Login">
 
     <Button
         android:id="@+id/signInBtn"
@@ -25,7 +25,7 @@ tools:context=".MainActivity">
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
-        android:hint="Username"
+        android:hint="Email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
@@ -35,7 +35,7 @@ tools:context=".MainActivity">
         app:startIconDrawable="@drawable/person_outline">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputSignInText"
+            android:id="@+id/inputEmailText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColorHint="#8D6E63" />
@@ -105,6 +105,22 @@ tools:context=".MainActivity">
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintVertical_bias="0.074" />
+
+    <Button
+        android:id="@+id/forgotPwBtn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="250dp"
+        android:layout_height="48dp"
+        android:text="Forgot Password"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="@android:color/darker_gray"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUpBtn"
         app:layout_constraintVertical_bias="0.074" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

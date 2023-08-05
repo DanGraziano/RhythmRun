@@ -17,7 +17,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.061" />
+        app:layout_constraintVertical_bias="0.040" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/firstNameInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/accountIntroText"
+        app:layout_constraintVertical_bias="0.040"
+        app:startIconDrawable="@drawable/person_outline">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lastNameInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/firstNameInputLayout"
+        app:layout_constraintVertical_bias="0.040"
+        app:startIconDrawable="@drawable/person_outline">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputLastName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInputLayout"
@@ -29,12 +69,92 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/firstNameInputLayout"
-        app:layout_constraintVertical_bias="0.048"
+        app:layout_constraintTop_toBottomOf="@+id/lastNameInputLayout"
+        app:layout_constraintVertical_bias="0.040"
         app:startIconDrawable="@drawable/person_outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputEmail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ageInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:hint="Age"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailInputLayout"
+        app:layout_constraintVertical_bias="0.040"
+        app:startIconDrawable="@drawable/person_outline">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputAge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/heightInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:hint="Height in Inches"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ageInputLayout"
+        app:layout_constraintVertical_bias="0.040"
+        app:startIconDrawable="@drawable/person_outline">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputHeight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/weightInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:hint="Weight in Pounds"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/heightInputLayout"
+        app:layout_constraintVertical_bias="0.040"
+        app:startIconDrawable="@drawable/person_outline">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/weightInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weightInputLayout"
+        app:layout_constraintVertical_bias="0.040"
+        app:startIconDrawable="@drawable/lock_icon">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputPassword"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -52,26 +172,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordInputLayout"
         app:layout_constraintVertical_bias="0.08" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/firstNameInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:hint="First Name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/accountIntroText"
-        app:layout_constraintVertical_bias="0.119"
-        app:startIconDrawable="@drawable/person_outline">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputFirstName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/logInBtn"
@@ -102,25 +202,6 @@
         app:layout_constraintTop_toBottomOf="@+id/accountIntroText"
         app:layout_constraintVertical_bias="0.003" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:hint="Password"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailInputLayout"
-        app:layout_constraintVertical_bias="0.056"
-        app:startIconDrawable="@drawable/lock_icon">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputPassword"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/textView4"
@@ -132,6 +213,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/createAccountBtn"
-        app:layout_constraintVertical_bias="0.329" />
+        app:layout_constraintVertical_bias="0.129" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

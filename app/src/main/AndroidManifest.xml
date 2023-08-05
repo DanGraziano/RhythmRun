@@ -20,6 +20,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDsGGFZ_KqLhoodT1thq1jIQDUkx0Vf_ls"/>
         <activity
+            android:name=".ForgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".EditProfile"
+            android:exported="false" />
+        <activity
+            android:name=".ChangeProfilePicture"
+            android:exported="false" />
+        <activity
             android:name=".Home"
             android:exported="false" />
         <activity
@@ -38,7 +47,7 @@
             android:name=".CreateAccount"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

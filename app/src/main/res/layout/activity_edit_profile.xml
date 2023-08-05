@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Settings">
-
+    tools:context=".EditProfile">
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".Settings"
-        >
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:id="@+id/masterLayout"
@@ -32,9 +29,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/logoutBtn"
                 android:layout_marginEnd="16dp"
-                android:layout_marginStart="5dp"
-                android:text="Welcome"
                 android:layout_marginBottom="30dp"
+                android:text="Welcome"
                 android:textSize="40sp" />
 
             <TextView
@@ -42,160 +38,156 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/logoutBtn"
-                android:layout_toEndOf="@+id/welcomeText"
                 android:layout_marginBottom="30dp"
+                android:layout_toEndOf="@+id/welcomeText"
                 android:text="Username"
                 android:textSize="40sp" />
+
 
             <TextView
                 android:id="@+id/textPlaceHolderEmail"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/userName"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/userName"
                 android:layout_marginEnd="45dp"
-                android:layout_marginStart="10dp"
                 android:layout_marginBottom="30dp"
-                android:textSize="20sp"
-                android:text="Email" />
+                android:text="Email"
+                android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/textEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/userName"
                 android:layout_centerHorizontal="true"
-                android:textSize="20sp"
-                android:text="TextView" />
+                android:padding="1dp"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textPlaceHolderFirstName"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/textPlaceHolderEmail"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginStart="10dp"
+                android:layout_below="@id/textPlaceHolderEmail"
                 android:layout_marginEnd="45dp"
-                android:textSize="20sp"
-                android:text="First Name" />
+                android:layout_marginBottom="30dp"
+                android:text="First Name"
+                android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/textFirstName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:textSize="20sp"
                 android:layout_below="@id/textPlaceHolderEmail"
-                android:text="TextView" />
+                android:padding="1dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textPlaceHolderLastName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginStart="10dp"
-                android:textSize="20sp"
-                android:layout_marginEnd="45dp"
                 android:layout_below="@id/textPlaceHolderFirstName"
-                android:text="Last Name " />
+                android:layout_marginEnd="45dp"
+                android:layout_marginBottom="30dp"
+                android:text="Last Name "
+                android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/textLastName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/textPlaceHolderFirstName"
-                android:text="TextView" />
+                android:padding="1dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textPlaceHolderAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_marginBottom="30dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="45dp"
                 android:layout_below="@id/textPlaceHolderLastName"
-                android:text="Age " />
+                android:layout_marginEnd="45dp"
+                android:layout_marginBottom="30dp"
+                android:text="Age "
+                android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/textAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/textPlaceHolderLastName"
-                android:text="TextView" />
+                android:padding="1dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textPlaceHolderWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginStart="10dp"
-                android:textSize="20sp"
-                android:layout_marginEnd="45dp"
                 android:layout_below="@id/textPlaceHolderAge"
-                android:text="Weight" />
+                android:layout_marginEnd="45dp"
+                android:layout_marginBottom="30dp"
+                android:text="Weight"
+                android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/textWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/textPlaceHolderAge"
-                android:text="TextView" />
+                android:padding="1dp"
+                android:layout_centerHorizontal="true"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textPlaceHolderHeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="30dp"
-                android:layout_marginStart="10dp"
-                android:textSize="20sp"
-                android:layout_marginEnd="45dp"
                 android:layout_below="@id/textPlaceHolderWeight"
-                android:text="Height" />
+                android:layout_marginEnd="45dp"
+                android:layout_marginBottom="30dp"
+                android:text="Height"
+                android:textSize="20sp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/textHeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/textPlaceHolderWeight"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/textPlaceHolderCadence"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="45dp"
-                android:layout_below="@id/textPlaceHolderHeight"
-                android:text="Goal " />
-
-            <TextView
-                android:id="@+id/textCadence"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:layout_below="@id/textPlaceHolderHeight"
+                android:padding="1dp"
                 android:layout_centerHorizontal="true"
+                android:textSize="20sp" />
+
+
+            <TextView
+                android:id="@+id/textPlaceholderCadenceDifficulty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textPlaceHolderHeight"
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="30dp"
-                android:text="No Cadence Goal" />
+                android:text="Set Cadence Goal"
+                android:textSize="20sp" />
+
+            <Spinner
+                android:id="@+id/dropdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textPlaceHolderHeight"
+                android:layout_alignBottom ="@id/textPlaceholderCadenceDifficulty"
+                android:layout_centerHorizontal="true"
+                android:layout_toRightOf="@id/textPlaceholderCadenceDifficulty"
+                android:entries="@array/options"
+                android:textSize="20sp" />
 
 
             <Button
-                android:id="@+id/editProfileBtn"
+                android:id="@+id/saveProfileBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/textCadence"
-                android:text="Edit Profile" />
+                android:layout_below="@id/textPlaceholderCadenceDifficulty"
+                android:text="Save" />
 
 
         </RelativeLayout>
@@ -235,4 +227,4 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

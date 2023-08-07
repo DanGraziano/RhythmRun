@@ -226,12 +226,12 @@ public class Home extends AppCompatActivity {
 					String date = String.valueOf(runSnapshot.child("date").getValue());
 					String distance = String.valueOf(runSnapshot.child("distance").getValue());
 					checkBadgeSystem(distance);
-					String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
-					String pace = String.valueOf(runSnapshot.child("pace").getValue());
+					String avgCadence = String.valueOf(runSnapshot.child("avgCadence").getValue());
+					String avgPace = String.valueOf(runSnapshot.child("avgPace").getValue());
 					String time = String.valueOf(runSnapshot.child("time").getValue());
 
 					// Add the RunModel to the runsList
-					RunModel run = new RunModel(date, distance, cadenceTime, pace, time);
+					RunModel run = new RunModel(date, distance, avgCadence, avgPace, time);
 					runsList.add(run);
 				}
 

@@ -1,9 +1,11 @@
 package edu.northeastern.rhythmrun;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +17,9 @@ import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +30,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,13 +54,14 @@ import java.util.Locale;
 public class ActiveWorkout extends AppCompatActivity {
 
 	private TextView targetSPM;
+
 	private TextView currentCadence;
+	private TextView currentTime;
 	private ImageView spmGear;
 	private Button soundToggle;
 	private TextView currentPace;
 	private TextView avgPace;
 	private TextView currentDistance;
-	private TextView GPS;
 	private Button end;
 	private Button pause;
 	private Spinner SPMSelector;
@@ -52,9 +73,10 @@ public class ActiveWorkout extends AppCompatActivity {
 	private boolean isLoud = true;
 	private int stepCount = 0;
 
-	private Location previousLocation;
 	private double totalDistance = 0.0;
-	private double totalTimeInSeconds = 0.0;
+	private Handler handler;
+	private long startTime;
+	private long timePaused = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +90,15 @@ public class ActiveWorkout extends AppCompatActivity {
 		currentPace = findViewById(R.id.currentPaceNumber);
 		avgPace = findViewById(R.id.avgPaceNumber);
 		currentDistance = findViewById(R.id.currentDistance);
+		currentTime = findViewById(R.id.currentTime);
 		pause = findViewById(R.id.pause);
 		end = findViewById(R.id.endButton);
 		SPMSelector = findViewById(R.id.spinner);
 		spmGear = findViewById(R.id.spmGear);
+
+		// Starts the timer for the run
+		handler = new Handler();
+		startTimer();
 
 		// Initialize sensor manager and accelerometer sensor
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -82,7 +109,7 @@ public class ActiveWorkout extends AppCompatActivity {
 
 		// Display map fragment
 		getSupportFragmentManager()
-				.beginTransaction().replace(R.id.google_map,fragment)
+				.beginTransaction().replace(R.id.google_map, fragment)
 				.commit();
 
 		// Set click listener for the END button
@@ -93,53 +120,58 @@ public class ActiveWorkout extends AppCompatActivity {
 				// TODO: add stats activity screen
 				//stopTracking();
 				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent(ActiveWorkout.this, StartWorkout.class);
+				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
 				startActivity(intent);
 			}
 		});
 
+		// Set click listener for the pause button
 		pause.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!isPaused) {
+				if (!isPaused) {
+					pauseTimer();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.resume));
-					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.gps_status_ready));
+					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gps_status_ready));
 					isPaused = true;
 					Toast.makeText(ActiveWorkout.this, "Workout Paused", Toast.LENGTH_SHORT).show();
-				}else{
+				} else if (isPaused) {
+					startTimer();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pause));
-					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(),R.color.pause));
+					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.pause));
 					isPaused = false;
 					Toast.makeText(ActiveWorkout.this, "Workout Resumed", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
 
+		// Set click listener for the metronome sound button
 		soundToggle.setOnClickListener(new View.OnClickListener() {
+			//TODO: here is where we need to mute the sound when the metronome is integrated
 			@Override
 			public void onClick(View v) {
-				if(isLoud) {
+				if (isLoud) {
 					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_off));
 					isLoud = false;
-				}else{
+				} else {
 					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_on));
 					isLoud = true;
 				}
 			}
 		});
 
-
+		// List of available beats per minute for metronome
 		ArrayList<Integer> validSPM = new ArrayList<Integer>();
-		for(Integer i=100; i<200; i++){
+		for (Integer i = 100; i < 200; i++) {
 			validSPM.add(i);
 		}
 
+		// Adapter for the spinner that contains all of the metronome frequencies
 		ArrayAdapter<Integer> spinnerAdapter = new ArrayAdapter<Integer>(getApplicationContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, validSPM);
 		SPMSelector.setAdapter(spinnerAdapter);
-		//SPMSelector.setVisibility(View.GONE);
 
+		// Set click listener for the adjusting metronome sound frequency while activity is running
 		spmGear.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				if (SPMSelector != null) {
@@ -157,21 +189,8 @@ public class ActiveWorkout extends AppCompatActivity {
 		});
 
 
-
-
-
-//		spmGear.setOnTouchListener(new View.OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				spmGear.setVisibility(v.GONE);
-//				SPMSelector.setVisibility(v.VISIBLE);
-//				SPMSelector.
-//				return false;
-//			}
-//		});
-
+		// Listener for the selection of the new metronome SPM frequency
 		SPMSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				String newValue = parent.getItemAtPosition(position).toString();
@@ -186,24 +205,53 @@ public class ActiveWorkout extends AppCompatActivity {
 
 		});
 
-
-
-
 		currentDistance.setText(Double.toString(totalDistance));
 
-
-		// Start GPS tracking fragment
-//		GPS.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				// Implement logic to start GPS tracking fragment in real-time.
-//				// You'll need to replace the placeholder TextView with the GPS tracking fragment.
-//				// You can use FragmentTransaction to replace the placeholder with the GPS fragment.
-//				// For simplicity, I'm just showing a toast here.
-//				// Toast.makeText(ActiveWorkout.this, "GPS Tracking Started", Toast.LENGTH_SHORT).show();
-//			}
-//		});
 	}
+
+	// Start timer from system clock
+	private void startTimer() {
+		if (startTime == 0) {
+			startTime = SystemClock.uptimeMillis();
+		} else {
+			startTime += (SystemClock.uptimeMillis() - timePaused);
+		}
+		handler.post(updateTimerRunnable);
+	}
+
+	// Pauses the timer
+	private void pauseTimer() {
+		if (!isPaused) {
+			handler.removeCallbacks(updateTimerRunnable);
+			timePaused = SystemClock.uptimeMillis();
+		}
+	}
+
+	// Timer thread to update the UI thread display
+	private Runnable updateTimerRunnable = new Runnable() {
+		public void run() {
+			long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+			int seconds = (int) (timeInMilliseconds / 1000);
+			int minutes = seconds / 60;
+			seconds %= 60;
+			int milliseconds = (int) (timeInMilliseconds % 1000);
+
+			String timerText = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
+			currentTime.setText(timerText);
+			handler.postDelayed(this, 10); // Update every 10 milliseconds
+		}
+	};
+
+	// Destroying the handler
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		handler.removeCallbacks(updateTimerRunnable);
+	}
+
+
+}
+
 
 //	// Register accelerometer listener onResume
 //	@Override
@@ -263,4 +311,4 @@ public class ActiveWorkout extends AppCompatActivity {
 //		String avgPaceText = String.format(Locale.getDefault(), "%.2f", averagePaceInMinutes);
 //		avgPace.setText(avgPaceText + " min/mile");
 //	}
-}
+//}

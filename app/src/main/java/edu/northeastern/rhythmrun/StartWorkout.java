@@ -246,9 +246,5 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates,18));
 	}
 
-
-	static public GoogleMap getgMap() {
-		return gMap;
-	}
 }
 

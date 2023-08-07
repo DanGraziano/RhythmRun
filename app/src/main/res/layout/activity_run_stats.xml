@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RunStats">
+
+
+    <LinearLayout
+        android:id="@+id/stats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        tools:ignore="MissingConstraints">
+
+
+        <!-- Mile Times -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/stats1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:id="@+id/divider1"
+                    android:layout_width="1dp"
+                    android:layout_height="46dp"
+                    android:background="#ccc"
+                    app:layout_constraintEnd_toEndOf="@+id/constraint1"
+                    app:layout_constraintStart_toStartOf="@+id/constraint1"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/totalDistance"
+                    android:layout_width="90dp"
+                    android:layout_height="20dp"
+                    android:text="Total Distance (Mi.)"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/divider1"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingVertical="4dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/currentPaceNumber"
+                    android:layout_width="90dp"
+                    android:layout_height="26dp"
+                    android:text="7:05"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/divider1"
+                    app:layout_constraintTop_toBottomOf="@+id/totalDistance"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/avgCadence"
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:text="AVG Pace"
+                    app:layout_constraintStart_toStartOf="@id/divider1"
+                    app:layout_constraintTop_toTopOf="@id/constraint1"
+                    app:layout_constraintEnd_toEndOf="@+id/constraint1"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="6dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/avgPaceNumber"
+                    android:layout_width="120dp"
+                    android:layout_height="26dp"
+                    android:text="0:00"
+                    app:layout_constraintStart_toStartOf="@id/divider1"
+                    app:layout_constraintTop_toBottomOf="@id/avgCadence"
+                    app:layout_constraintEnd_toEndOf="@+id/constraint1"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <!-- Total Time -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/timeStats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/timeStatsConstraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/timeStatsText"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:text="Total Time"
+                    app:layout_constraintStart_toStartOf="@id/timeStatsConstraint"
+                    app:layout_constraintTop_toTopOf="@id/timeStatsConstraint"
+                    app:layout_constraintEnd_toEndOf="@+id/timeStatsConstraint"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="6dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/finalTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:text="0:00.00"
+                    app:layout_constraintStart_toStartOf="@id/timeStatsConstraint"
+                    app:layout_constraintTop_toBottomOf="@id/timeStatsText"
+                    app:layout_constraintEnd_toEndOf="@+id/timeStatsConstraint"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/mileSplits"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toTopOf="@+id/finalRoute"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="10dp">
+
+
+        <fragment
+            android:id="@+id/splits"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/finalRoute"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="10dp">
+
+
+        <fragment
+            android:id="@+id/finalRouteMap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

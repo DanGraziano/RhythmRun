@@ -2,22 +2,14 @@ package edu.northeastern.rhythmrun;
 
 public class CreateUserInDB {
 
-    //TODO make private and use getters and setters
-
-    public String firstname;
-
-    public String lastname;
-
-    public String age;
-
-    public String weight;
-
-    public String height;
-    public String email;
-    public String password;
-
-    public String cadenceGoal;
-
+    private String firstname;
+    private String lastname;
+    private String age;
+    private String weight;
+    private String height;
+    private String email;
+    private String password;
+    private String cadenceGoal;
 
     // for firebase
     public CreateUserInDB(){
@@ -45,4 +37,38 @@ public class CreateUserInDB {
         this.password = password;
         this.cadenceGoal = cadenceGoal;
     }
+
+    // Getters for accessing the fields
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getCadenceGoal() {
+        return cadenceGoal;
+    }
+
 }

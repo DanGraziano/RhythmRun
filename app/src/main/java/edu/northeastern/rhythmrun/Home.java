@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class Home extends AppCompatActivity {
@@ -200,17 +201,19 @@ public class Home extends AppCompatActivity {
 		checkAndSetBadgeVisibility50K(distance);
 	}
 
-
 	private void setupRunModels() {
-
 		if (currentUser == null) {
 			// User is not logged in, handle the case appropriately
 			return;
 		}
 
 		String userUid = currentUser.getUid();
-		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("UserRunsMapping");
-		Query userRunsQuery = userRunsRef.orderByChild("user").equalTo(userUid);
+		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("Users")
+				.child(userUid)
+				.child("Runs");
+
+		// Order runs by date
+		Query userRunsQuery = userRunsRef.orderByChild("date");
 
 		userRunsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
@@ -218,53 +221,30 @@ public class Home extends AppCompatActivity {
 				// Clear the list before adding new items to avoid duplication
 				runsList.clear();
 
-				if (dataSnapshot.exists()) {
-					for (DataSnapshot userRunSnapshot : dataSnapshot.getChildren()) {
-						HashMap<String, Object> userRunData = (HashMap<String, Object>) userRunSnapshot.getValue();
+				for (DataSnapshot runSnapshot : dataSnapshot.getChildren()) {
+					// Fetch the run details from the snapshot
+					String date = String.valueOf(runSnapshot.child("date").getValue());
+					String distance = String.valueOf(runSnapshot.child("distance").getValue());
+					checkBadgeSystem(distance);
+					String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
+					String pace = String.valueOf(runSnapshot.child("pace").getValue());
+					String calories = String.valueOf(runSnapshot.child("calories").getValue());
+					String time = String.valueOf(runSnapshot.child("time").getValue());
 
-						// Get the value of the "user" field (assuming "user" is a key in the HashMap)
-						String runId = (String) userRunData.get("run");
+					// Add the RunModel to the runsList
+					RunModel run = new RunModel(date, distance, cadenceTime, pace, calories, time);
+					runsList.add(run);
+				}
 
-						// Query the "Runs" table to get details of the current run
-						DatabaseReference runsRef = FirebaseDatabase.getInstance().getReference("Runs")
-								.child(runId);
-						runsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-							@Override
-							public void onDataChange(@NonNull DataSnapshot runSnapshot) {
-								if (runSnapshot.exists()) {
-									// Fetch the run details from the snapshot
-									Log.d("Inside run snapshot", String.valueOf(runSnapshot));
-									String date = String.valueOf(runSnapshot.child("date").getValue());
-									String distance = String.valueOf(runSnapshot.child("distance").getValue());
-									checkBadgeSystem(distance);
-									String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
-									String pace = String.valueOf(runSnapshot.child("pace").getValue());
-									String calories = String.valueOf(runSnapshot.child("calories").getValue());
-									String time = String.valueOf(runSnapshot.child("time").getValue());
+				// Reverse the list to display most recent run is first (by date)
+				Collections.reverse(runsList);
 
-									// Add the RunModel to the runsList
-									RunModel run = new RunModel(date, distance, cadenceTime, pace, calories, time);
-									runsList.add(run);
-
-									// Update the RecyclerView after fetching all runs
-									if (runsList.size() == dataSnapshot.getChildrenCount()) {
-										RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
-										recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
-										RunAdapter runAdapter = new RunAdapter(runsList);
-										recyclerView.setAdapter(runAdapter);
-									}
-								}
-							}
-
-							@Override
-							public void onCancelled(@NonNull DatabaseError databaseError) {
-								// Handle errors if needed
-							}
-						});
-					}
-				} else {
-					// Handle the case when there are no runs associated with the user
-					// For example, you can show a message to the user or hide the RecyclerView
+				// Update the RecyclerView after fetching all runs
+				if (runsList.size() == dataSnapshot.getChildrenCount()) {
+					RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
+					recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
+					RunAdapter runAdapter = new RunAdapter(runsList);
+					recyclerView.setAdapter(runAdapter);
 				}
 			}
 
@@ -274,8 +254,4 @@ public class Home extends AppCompatActivity {
 			}
 		});
 	}
-
-
-
-
 }

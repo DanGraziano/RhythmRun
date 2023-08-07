@@ -3,15 +3,19 @@ package edu.northeastern.rhythmrun;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
@@ -86,6 +90,30 @@ public class Login extends AppCompatActivity {
         // Open sign up page from button click
         Button signUpBtn = findViewById(R.id.signUpBtn);
         signUpBtn.setOnClickListener(v -> startActivity(new Intent(Login.this, CreateAccount.class)));
+
+        TextInputLayout passwordLayout = findViewById(R.id.inputPasswordLayout);
+        passwordLayout.setEndIconOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                togglePasswordVisibility(passwordInput, passwordLayout);
+            }
+        });
+    }
+
+    private void togglePasswordVisibility(TextInputEditText passwordEditText, TextInputLayout passwordLayout) {
+        if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+            // Show password
+            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            passwordLayout.setEndIconDrawable(R.drawable.ic_hide_password);
+
+        }
+        else {
+            // Hide password
+            passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            passwordLayout.setEndIconDrawable(R.drawable.ic_show_password);
+        }
+        // Move the cursor to the end of the password input field
+        passwordEditText.setSelection(Objects.requireNonNull(passwordEditText.getText()).length());
     }
 
     private void checkUserInputs() {
@@ -182,7 +210,4 @@ public class Login extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
 }
-
-// TODO figure our how to make password visible or hidden

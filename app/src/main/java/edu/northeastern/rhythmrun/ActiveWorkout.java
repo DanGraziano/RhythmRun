@@ -15,32 +15,41 @@ import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.MapFragment;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class ActiveWorkout extends AppCompatActivity {
 
 	private TextView targetSPM;
 	private TextView currentCadence;
-	private ImageView soundToggle;
+	private ImageView spmGear;
+	private Button soundToggle;
 	private TextView currentPace;
 	private TextView avgPace;
 	private TextView currentDistance;
 	private TextView GPS;
 	private Button end;
 	private Button pause;
+	private Spinner SPMSelector;
 
 	private SensorManager sensorManager;
 	private Sensor accelerometer;
 	private boolean isRunning = false;
 	private boolean isPaused = false;
+	private boolean isLoud = true;
 	private int stepCount = 0;
 
 	private Location previousLocation;
@@ -61,6 +70,8 @@ public class ActiveWorkout extends AppCompatActivity {
 		currentDistance = findViewById(R.id.currentDistance);
 		pause = findViewById(R.id.pause);
 		end = findViewById(R.id.endButton);
+		SPMSelector = findViewById(R.id.spinner);
+		spmGear = findViewById(R.id.spmGear);
 
 		// Initialize sensor manager and accelerometer sensor
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -103,6 +114,79 @@ public class ActiveWorkout extends AppCompatActivity {
 				}
 			}
 		});
+
+		soundToggle.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(isLoud) {
+					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_off));
+					isLoud = false;
+				}else{
+					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_on));
+					isLoud = true;
+				}
+			}
+		});
+
+
+		ArrayList<Integer> validSPM = new ArrayList<Integer>();
+		for(Integer i=100; i<200; i++){
+			validSPM.add(i);
+		}
+
+		ArrayAdapter<Integer> spinnerAdapter = new ArrayAdapter<Integer>(getApplicationContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, validSPM);
+		SPMSelector.setAdapter(spinnerAdapter);
+		//SPMSelector.setVisibility(View.GONE);
+
+		spmGear.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (SPMSelector != null) {
+					try {
+						Method method = Spinner.class.getDeclaredMethod("onDetachedFromWindow");
+						method.setAccessible(true);
+						method.invoke(SPMSelector);
+						SPMSelector.setVisibility(View.VISIBLE);
+						SPMSelector.performClick();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+
+
+
+
+//		spmGear.setOnTouchListener(new View.OnTouchListener() {
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				spmGear.setVisibility(v.GONE);
+//				SPMSelector.setVisibility(v.VISIBLE);
+//				SPMSelector.
+//				return false;
+//			}
+//		});
+
+		SPMSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				String newValue = parent.getItemAtPosition(position).toString();
+				targetSPM.setText(newValue);
+				SPMSelector.setVisibility(View.GONE);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+
+		});
+
+
 
 
 		currentDistance.setText(Double.toString(totalDistance));

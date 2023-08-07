@@ -5,5 +5,9 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+    <style name="SpinnerTheme" parent="android:Widget.Spinner">
+        <item name="android:background">@drawable/settings_icon</item>
+    </style>
+
     <style name="Theme.RhythmRun" parent="Base.Theme.RhythmRun" />
 </resources>

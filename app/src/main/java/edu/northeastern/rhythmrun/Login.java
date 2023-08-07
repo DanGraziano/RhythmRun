@@ -30,8 +30,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
@@ -150,23 +153,44 @@ public class Login extends AppCompatActivity {
                     FirebaseUser user = authProfile.getCurrentUser();
 
                     if (user.isEmailVerified()) {
-                        // Create the "Runs" node for the current user
+                        // Get a reference to the "Runs" node for the current user
                         DatabaseReference runsRef = FirebaseDatabase.getInstance().getReference("Users")
                                 .child(user.getUid())
                                 .child("Runs");
-                        runsRef.setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                        // Check if the "Runs" node exists for the current user
+                        runsRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    // "Runs" node is created successfully
-                                    // Go to the home screen
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.exists()) {
+                                    // The "Runs" node does not exist, so create it
+                                    runsRef.setValue("").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                // "Runs" node is created successfully
+                                                // Go to the home screen
+                                                Intent intent = new Intent(Login.this, Home.class);
+                                                startActivity(intent);
+                                                finish(); // Close the login activity to prevent going back
+                                            } else {
+                                                // Handle the error
+                                                Toast.makeText(Login.this, "Failed to create the 'Runs' node", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    // The "Runs" node already exists, so go to the home screen
                                     Intent intent = new Intent(Login.this, Home.class);
                                     startActivity(intent);
                                     finish(); // Close the login activity to prevent going back
-                                } else {
-                                    // Handle the error
-                                    Toast.makeText(Login.this, "Failed to create the 'Runs' node", Toast.LENGTH_SHORT).show();
                                 }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle the database error if any
+                                Toast.makeText(Login.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -193,6 +217,7 @@ public class Login extends AppCompatActivity {
             }
         });
     }
+
 
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);

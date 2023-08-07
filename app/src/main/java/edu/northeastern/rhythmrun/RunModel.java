@@ -3,21 +3,19 @@ package edu.northeastern.rhythmrun;
 public class RunModel {
     private String date;
     private String distance;
-    private String cadenceTime;
-    private String pace;
-    private String calories;
+    private String avgCadence;
+    private String avgPace;
     private String time;
 
     public RunModel() {
         // Default constructor required for Firebase Realtime Database
     }
 
-    public RunModel(String date, String distance, String cadenceTime, String pace, String calories, String time) {
+    public RunModel(String date, String distance, String avgCadence, String avgPace, String time) {
         this.date = date;
         this.distance = distance;
-        this.cadenceTime = cadenceTime;
-        this.pace = pace;
-        this.calories = calories;
+        this.avgCadence = avgCadence;
+        this.avgPace = avgPace;
         this.time = time;
     }
 
@@ -29,16 +27,12 @@ public class RunModel {
         return distance;
     }
 
-    public String getCadenceTime() {
-        return cadenceTime;
+    public String getAvgCadence() {
+        return avgCadence;
     }
 
-    public String getPace() {
-        return pace;
-    }
-
-    public String getCalories() {
-        return calories;
+    public String getAvgPace() {
+        return avgPace;
     }
 
     public String getTime() {

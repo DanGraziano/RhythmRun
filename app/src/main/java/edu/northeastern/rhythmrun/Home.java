@@ -228,11 +228,10 @@ public class Home extends AppCompatActivity {
 					checkBadgeSystem(distance);
 					String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
 					String pace = String.valueOf(runSnapshot.child("pace").getValue());
-					String calories = String.valueOf(runSnapshot.child("calories").getValue());
 					String time = String.valueOf(runSnapshot.child("time").getValue());
 
 					// Add the RunModel to the runsList
-					RunModel run = new RunModel(date, distance, cadenceTime, pace, calories, time);
+					RunModel run = new RunModel(date, distance, cadenceTime, pace, time);
 					runsList.add(run);
 				}
 

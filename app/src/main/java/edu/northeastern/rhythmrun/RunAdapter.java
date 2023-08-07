@@ -33,7 +33,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder> {
         holder.numOfMiles.setText(run.getDistance());
         holder.runDate.setText(run.getDate());
         holder.runMinutes.setText(run.getTime());
-        holder.miPerMin.setText(run.getPace());
+        holder.miPerMin.setText(run.getAvgPace());
     }
 
     @Override

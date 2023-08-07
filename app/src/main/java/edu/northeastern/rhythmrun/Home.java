@@ -12,7 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,9 +28,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class Home extends AppCompatActivity {
 
@@ -77,7 +84,14 @@ public class Home extends AppCompatActivity {
 
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
-		fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
+		//fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
+		// TODO For testing only -- Remove for production
+		fabButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				AddRunData(view);
+			}
+		});
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -242,7 +256,7 @@ public class Home extends AppCompatActivity {
 				if (runsList.size() == dataSnapshot.getChildrenCount()) {
 					RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
 					recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
-					RunAdapter runAdapter = new RunAdapter(runsList);
+					RunAdapter runAdapter = new RunAdapter(runsList, recyclerView);
 					recyclerView.setAdapter(runAdapter);
 				}
 			}
@@ -253,4 +267,59 @@ public class Home extends AppCompatActivity {
 			}
 		});
 	}
+
+	// TODO For testing only -- Remove for production
+	public void AddRunData(View view) {
+		// Get the current user ID
+		String userUid = currentUser.getUid();
+
+		// Generate the current date (you can use your preferred date format)
+		String currentDate = getCurrentDate(); // Implement the method getCurrentDate()
+
+		// Add hardcoded values for time, distance, avgCadence, and avgPace
+		String distance = "5.0";
+		String time = "30:00";
+		String avgCadence = "180";
+		String avgPace = "6:00";
+
+		// Get a reference to the "Runs" node for the current user
+		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("Users")
+				.child(userUid)
+				.child("Runs");
+
+		// Generate a unique ID for the new run entry
+		String runId = userRunsRef.push().getKey();
+
+		// Create a HashMap to store the run data
+		HashMap<String, Object> runData = new HashMap<>();
+		runData.put("date", currentDate);
+		runData.put("distance", distance);
+		runData.put("avgCadence", avgCadence);
+		runData.put("avgPace", avgPace);
+		runData.put("time", time);
+
+		// Add the run data to the "Runs" node for the current user
+		userRunsRef.child(runId).setValue(runData)
+				.addOnSuccessListener(new OnSuccessListener<Void>() {
+					@Override
+					public void onSuccess(Void aVoid) {
+						// Data added successfully
+						Toast.makeText(Home.this, "Run data added successfully", Toast.LENGTH_SHORT).show();
+					}
+				})
+				.addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Toast.makeText(Home.this, "Failed to add run data", Toast.LENGTH_SHORT).show();
+					}
+				});
+	}
+
+	// TODO For testing only -- Remove for production
+	private String getCurrentDate() {
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+		Date date = new Date();
+		return dateFormat.format(date);
+	}
+
 }

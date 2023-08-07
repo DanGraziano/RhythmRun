@@ -2,15 +2,21 @@ package edu.northeastern.rhythmrun;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,16 +46,12 @@ public class Home extends AppCompatActivity {
 
 	ArrayList<RunModel> runsList = new ArrayList<>();
 	RecyclerView recyclerView;
-	ImageView profileImage, oneMileRun, threeMileRun, fiveKRun, tenKRun, fityMileRun;
+	ImageView profileImage, oneMileRun, halfMarathonRun, fiveKRun, tenKRun, fiftyMileRun, signUpBadge;
 	FloatingActionButton fabButton;
 	BottomNavigationView bottomNavigationView;
 	TextView username;
 	FirebaseUser currentUser;
-
-	// TODO Make Recycler clickable and new activity
-	// TODO Make nicer color and text the group will need to decide that
-	// TODO maybe a on hoover listener for badges to give user context
-	// TODO maybe add a loading spinner to make transitions nicer
+	private PopupWindow tooltipPopup; // Declare the tooltipPopup variable here
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +62,18 @@ public class Home extends AppCompatActivity {
 		recyclerView = findViewById(R.id.runHistoryRecy);
 		profileImage = findViewById(R.id.profileImage);
 		oneMileRun = findViewById(R.id.oneMileBadge);
-		threeMileRun = findViewById(R.id.threeMileBadge);
+		halfMarathonRun = findViewById(R.id.halfMarathonBadge);
 		fiveKRun = findViewById(R.id.fiveKBadge);
 		tenKRun = findViewById(R.id.tenKBadge);
-		fityMileRun = findViewById(R.id.fiftyMileBadge);
+		fiftyMileRun = findViewById(R.id.fiftyMileBadge);
+		signUpBadge = findViewById(R.id.signingUpBadge);
 
+		signUpBadge.setOnClickListener(v -> showTooltip(v, getString(R.string.sign_up_badge_tooltip)));
+		oneMileRun.setOnClickListener(v -> showTooltip(v, getString(R.string.one_mile_badge_tooltip)));
+		fiveKRun.setOnClickListener(v -> showTooltip(v, getString(R.string.five_k_badge_tooltip)));
+		tenKRun.setOnClickListener(v -> showTooltip(v, getString(R.string.ten_k_badge_tooltip)));
+		halfMarathonRun.setOnClickListener(v -> showTooltip(v, getString(R.string.half_marathon_badge_tooltip)));
+		fiftyMileRun.setOnClickListener(v -> showTooltip(v, getString(R.string.fifty_mile_badge_tooltip)));
 
 		profileImage.setOnClickListener(v-> new Intent(Home.this, ChangeProfilePicture.class));
 
@@ -85,7 +94,7 @@ public class Home extends AppCompatActivity {
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
 		//fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
-		// TODO For testing only -- Remove for production
+		// TODO For testing only -- Remove from production and use the above instead
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -97,6 +106,10 @@ public class Home extends AppCompatActivity {
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
 		setupNavBar();
 
+	}
+
+	private void showTooltip(View anchorView, String tooltipText) {
+		TooltipCompat.setTooltipText(anchorView, tooltipText);
 	}
 
 	private void showUserProfile(FirebaseUser firebaseUser){
@@ -154,7 +167,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibilityOneMile(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >=1 && distanceInMiles < 3 ) {
+			if (distanceInMiles >=1 ) {
 				oneMileRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -162,21 +175,21 @@ public class Home extends AppCompatActivity {
 		}
 	}
 
-	public void checkAndSetBadgeVisibilityThreeMile(String distance) {
+	public void checkAndSetBadgeVisibilityHalfMarathon(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 3.0 && distanceInMiles < 3.1) {
-				threeMileRun.setAlpha(1.0f);
+			if (distanceInMiles >= 13.1) {
+				halfMarathonRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
-			threeMileRun.setAlpha(0.15f);
+			halfMarathonRun.setAlpha(0.15f);
 		}
 	}
 
 	public void checkAndSetBadgeVisibility5K(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 3.1 && distanceInMiles < 6.2) {
+			if (distanceInMiles >= 3.1) {
 				fiveKRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -187,7 +200,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibility10K(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 6.2 && distanceInMiles < 50) {
+			if (distanceInMiles >= 6.2) {
 				tenKRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -199,17 +212,17 @@ public class Home extends AppCompatActivity {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
 			if (distanceInMiles >= 50) {
-				fityMileRun.setAlpha(1.0f);
+				fiftyMileRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
-			fityMileRun.setAlpha(0.15f);
+			fiftyMileRun.setAlpha(0.15f);
 		}
 	}
 
 
 	public void checkBadgeSystem(String distance) {
 		checkAndSetBadgeVisibilityOneMile(distance);
-		checkAndSetBadgeVisibilityThreeMile(distance);
+		checkAndSetBadgeVisibilityHalfMarathon(distance);
 		checkAndSetBadgeVisibility5K(distance);
 		checkAndSetBadgeVisibility10K(distance);
 		checkAndSetBadgeVisibility50K(distance);
@@ -277,10 +290,10 @@ public class Home extends AppCompatActivity {
 		String currentDate = getCurrentDate(); // Implement the method getCurrentDate()
 
 		// Add hardcoded values for time, distance, avgCadence, and avgPace
-		String distance = "5.0";
-		String time = "30:00";
+		String distance = "10.0";
+		String time = "70:00";
 		String avgCadence = "180";
-		String avgPace = "6:00";
+		String avgPace = "7:00";
 
 		// Get a reference to the "Runs" node for the current user
 		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("Users")

@@ -82,7 +82,8 @@
                 android:layout_height="75dp"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:src="@drawable/getting_started" />
+                android:src="@drawable/getting_started"
+                app:tooltipText="@string/sign_up_badge_tooltip" />
 
             <!-- Image View 2 -->
             <ImageView
@@ -92,19 +93,10 @@
                 android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:src="@drawable/one_mile" />
+                android:src="@drawable/one_mile"
+                app:tooltipText="@string/one_mile_badge_tooltip"/>
 
             <!-- Image View 3 -->
-            <ImageView
-                android:id="@+id/threeMileBadge"
-                android:layout_width="0dp"
-                android:layout_height="75dp"
-                android:alpha="0.15"
-                android:layout_rowWeight="1"
-                android:layout_columnWeight="1"
-                android:src="@drawable/three_mile" />
-
-            <!-- Image View 4 -->
             <ImageView
                 android:id="@+id/fiveKBadge"
                 android:layout_width="0dp"
@@ -112,9 +104,10 @@
                 android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:src="@drawable/five_k" />
+                android:src="@drawable/five_k"
+                app:tooltipText="@string/five_k_badge_tooltip"/>
 
-            <!-- Image View 5 -->
+            <!-- Image View 4 -->
             <ImageView
                 android:id="@+id/tenKBadge"
                 android:layout_width="0dp"
@@ -122,7 +115,19 @@
                 android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:src="@drawable/ten_k" />
+                android:src="@drawable/ten_k"
+                app:tooltipText="@string/ten_k_badge_tooltip"/>
+
+            <!-- Image View 5 -->
+            <ImageView
+                android:id="@+id/halfMarathonBadge"
+                android:layout_width="0dp"
+                android:layout_height="75dp"
+                android:alpha="0.15"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                android:src="@drawable/half_marathon"
+                app:tooltipText="@string/half_marathon_badge_tooltip"/>
 
             <!-- Image View 6 -->
             <ImageView
@@ -132,7 +137,8 @@
                 android:alpha="0.15"
                 android:layout_rowWeight="1"
                 android:layout_columnWeight="1"
-                android:src="@drawable/fifty_mile" />
+                android:src="@drawable/fifty_mile"
+                app:tooltipText="@string/fifty_mile_badge_tooltip"/>
 
         </GridLayout>
 
@@ -192,7 +198,6 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
 
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/startWorkoutFab"
         android:layout_width="wrap_content"
@@ -201,6 +206,7 @@
         app:backgroundTint="#28DA31"
         app:fabCustomSize="64dp"
         app:layout_anchor="@id/bottomAppBar"
-        app:maxImageSize="64dp" />
+        app:maxImageSize="64dp"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -156,19 +156,19 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cv3"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="287dp"
             android:layout_alignParentBottom="true">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/runHistoryRecy"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:elevation="4dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/runHistoryRecy"
+                android:layout_width="match_parent"
+                android:layout_height="275dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/white"
+                android:elevation="4dp" />
 
         </androidx.cardview.widget.CardView>
 

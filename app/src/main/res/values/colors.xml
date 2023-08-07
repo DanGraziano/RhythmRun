@@ -6,4 +6,6 @@
     <color name="gps_status_not_ready">#FF0000</color>
     <!-- Green for when GPS is ready -->
     <color name="gps_status_ready">#00FF00</color>
+    <!-- Orange for pause button -->
+    <color name="pause">#FF6600</color>
 </resources>

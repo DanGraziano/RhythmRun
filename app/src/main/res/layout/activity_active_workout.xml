@@ -1,9 +1,291 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ActiveWorkout">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- GPS Window (Top Half) -->
+    <RelativeLayout
+        android:id="@+id/gpsWindow"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:background="@android:color/darker_gray">
+
+        <!-- Your GPS tracking view or map view can be added here -->
+        <!-- Replace the following placeholder TextView with your GPS tracking implementation -->
+<!--        <TextView-->
+<!--            android:id="@+id/gpsTextView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:text="GPS Window"-->
+<!--            android:textSize="20sp"-->
+<!--            android:gravity="center"-->
+<!--            android:textColor="@android:color/white" />-->
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/google_map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+    </RelativeLayout>
+
+    <!-- Lower Half (Divided into 4 sections) -->
+    <LinearLayout
+        android:id="@+id/metrics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gpsWindow"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Cadence -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cadenceCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cadenceConstraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/targetSPM"
+                    android:layout_width="90dp"
+                    android:layout_height="20dp"
+                    android:text="Target SPM"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingVertical="4dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/targetSPMNumber"
+                    android:layout_width="90dp"
+                    android:layout_height="26dp"
+                    android:text="180 SPM"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/targetSPM"
+                    android:textSize="8dp"
+                    android:textAlignment="center"
+                    android:paddingVertical="6dp"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/cadenceText"
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:text="Cadence"
+                    app:layout_constraintStart_toStartOf="@id/cadenceConstraint"
+                    app:layout_constraintTop_toTopOf="@id/cadenceConstraint"
+                    app:layout_constraintEnd_toEndOf="@+id/cadenceConstraint"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="6dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/currentCadenceNumber"
+                    android:layout_width="120dp"
+                    android:layout_height="26dp"
+                    android:text="176 SPM"
+                    app:layout_constraintStart_toStartOf="@id/cadenceConstraint"
+                    app:layout_constraintTop_toBottomOf="@id/cadenceText"
+                    app:layout_constraintEnd_toEndOf="@+id/cadenceConstraint"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <ImageView
+                    android:id="@+id/soundToggle"
+                    android:layout_width="90dp"
+                    android:layout_height="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/sound_on"
+                    tools:ignore="MissingConstraints" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Mile Times -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/distanceCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/distanceConstraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View
+                    android:id="@+id/distanceDivider"
+                    android:layout_width="1dp"
+                    android:layout_height="46dp"
+                    android:background="#ccc"
+                    app:layout_constraintEnd_toEndOf="@+id/distanceConstraint"
+                    app:layout_constraintStart_toStartOf="@+id/distanceConstraint"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/currentPaceText"
+                    android:layout_width="90dp"
+                    android:layout_height="20dp"
+                    android:text="Rolling Mile"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/distanceDivider"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingVertical="4dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/currentPaceNumber"
+                    android:layout_width="90dp"
+                    android:layout_height="26dp"
+                    android:text="7:05"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/distanceDivider"
+                    app:layout_constraintTop_toBottomOf="@+id/currentPaceText"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/avgPaceText"
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:text="AVG Pace"
+                    app:layout_constraintStart_toStartOf="@id/distanceDivider"
+                    app:layout_constraintTop_toTopOf="@id/distanceConstraint"
+                    app:layout_constraintEnd_toEndOf="@+id/distanceConstraint"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="6dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/avgPaceNumber"
+                    android:layout_width="120dp"
+                    android:layout_height="26dp"
+                    android:text="0:00"
+                    app:layout_constraintStart_toStartOf="@id/distanceDivider"
+                    app:layout_constraintTop_toBottomOf="@id/avgPaceText"
+                    app:layout_constraintEnd_toEndOf="@+id/distanceConstraint"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Mileage -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/mileageCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/mileageConstraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/mileageText"
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:text="Distance (Miles)"
+                    app:layout_constraintStart_toStartOf="@id/mileageConstraint"
+                    app:layout_constraintTop_toTopOf="@id/mileageConstraint"
+                    app:layout_constraintEnd_toEndOf="@+id/mileageConstraint"
+                    android:textSize="6dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="6dp"
+                    tools:ignore="MissingConstraints" />
+
+
+                <TextView
+                    android:id="@+id/currentDistance"
+                    android:layout_width="120dp"
+                    android:layout_height="26dp"
+                    android:text="0.00"
+                    app:layout_constraintStart_toStartOf="@id/mileageConstraint"
+                    app:layout_constraintTop_toBottomOf="@id/mileageText"
+                    app:layout_constraintEnd_toEndOf="@+id/mileageConstraint"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="1dp"
+                    tools:ignore="MissingConstraints" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/metrics"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/buttonsConstraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/endButton"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/pause"
+                android:background="@drawable/stop"
+                app:backgroundTint="@color/gps_status_not_ready"
+                tools:ignore="MissingConstraints">
+            </Button>
+
+            <Button
+                android:id="@+id/pause"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/endButton"
+                android:background="@drawable/pause"
+                app:backgroundTint="#ff6600"
+                tools:ignore="MissingConstraints">
+            </Button>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

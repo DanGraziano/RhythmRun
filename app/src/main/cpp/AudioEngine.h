@@ -17,6 +17,9 @@ public:
 private:
     Oscillator oscillator_;
     AAudioStream *stream_;
+    int bpm = 0;
+    float sampleRate = 0.0;
+    int interval = 60.0 / bpm * sampleRate
 };
 
 

@@ -20,6 +20,8 @@ aaudio_data_callback_result_t dataCallback(
     return AAUDIO_CALLBACK_RESULT_CONTINUE;
 }
 
+// If there is an error starting or creating the audio stream this method is triggered nad will try and restart the stream
+// A condition which this may be triggered is if the users switches audio outputs while listening to the metronome.
 void errorCallback(AAudioStream *stream,
                    void *userData,
                    aaudio_result_t error){
@@ -31,6 +33,7 @@ void errorCallback(AAudioStream *stream,
 }
 
 bool AudioEngine::start() {
+    //Create stream and configure settings
     AAudioStreamBuilder *streamBuilder;
     AAudio_createStreamBuilder(&streamBuilder);
     AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_FLOAT);
@@ -39,8 +42,10 @@ bool AudioEngine::start() {
     AAudioStreamBuilder_setDataCallback(streamBuilder, ::dataCallback, &oscillator_);
     AAudioStreamBuilder_setErrorCallback(streamBuilder, ::errorCallback, this);
 
-    // Opens the stream.
+    // Opens the stream (Audio stream of the device).
     aaudio_result_t result = AAudioStreamBuilder_openStream(streamBuilder, &stream_);
+
+    // Stops the stream and prints error.
     if (result != AAUDIO_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "AudioEngine", "Error opening stream %s",
                             AAudio_convertResultToText(result));
@@ -62,6 +67,10 @@ bool AudioEngine::start() {
                             AAudio_convertResultToText(result));
         return false;
     }
+
+    //TODO: Figure out sample rate, interval = 60.00(time) / bpm * SampleRate (gets the target bpm according to sample rate)
+
+
 
     AAudioStreamBuilder_delete(streamBuilder);
     return true;

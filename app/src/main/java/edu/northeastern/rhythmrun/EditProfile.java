@@ -1,5 +1,6 @@
 package edu.northeastern.rhythmrun;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -15,8 +16,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditProfile extends AppCompatActivity {
 
@@ -24,8 +31,8 @@ public class EditProfile extends AppCompatActivity {
     private Button logout, saveProfileBtn;
 
     private Spinner spinner;
-    private TextView userName,textEmail,textFirstName,textLastName,textAge,textWeight,
-            textHeight;
+    private TextView userName,textEmail,textFirstName,textLastName,editAge,editWeight,
+            editHeight;
     private BottomNavigationView bottomNavigationView;
 
     FloatingActionButton fabButton;
@@ -45,12 +52,10 @@ public class EditProfile extends AppCompatActivity {
         textEmail = findViewById(R.id.textEmail);
         textFirstName = findViewById(R.id.textFirstName);
         textLastName = findViewById(R.id.textLastName);
-        textAge = findViewById(R.id.textAge);
-        textWeight = findViewById(R.id.textWeight);
-        textHeight = findViewById(R.id.textHeight);
+        editAge = findViewById(R.id.editAge);
+        editWeight = findViewById(R.id.editWeight);
+        editHeight = findViewById(R.id.editHeight);
         spinner = findViewById(R.id.dropdown);
-
-
 
 
         // logged in user
@@ -61,12 +66,12 @@ public class EditProfile extends AppCompatActivity {
             String uid = currentUser.getUid(); // Get the user's unique ID
             String displayName = currentUser.getDisplayName(); // Get the user's display name
             userName.setText(displayName);
+            displayUsersData(currentUser);
             // make save button handler
             saveProfileBtn.setOnClickListener(v->{
                 updateUsersInformation(currentUser);
                 startActivity(new Intent(EditProfile.this,Settings.class));
             });
-
 
         }
 
@@ -108,46 +113,53 @@ public class EditProfile extends AppCompatActivity {
         String userId = user.getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
 
-        String email = textEmail.getText().toString();
-        String age = textAge.getText().toString();
-        String firstName = textFirstName.getText().toString();
-        String lastName = textLastName.getText().toString();
-        String height = textHeight.getText().toString();
-        String weight = textWeight.getText().toString();
-        String goal = (String) spinner.getSelectedItem();
+        UserProfile userProfile = new UserProfile();
+        userProfile.setAge(editAge.getText().toString());
+        userProfile.setWeight(editWeight.getText().toString());
+        userProfile.setHeight(editHeight.getText().toString());
+        userProfile.setCadenceGoal((String) spinner.getSelectedItem());
 
-
-        if (!TextUtils.isEmpty(age)) {
-            reference.child(userId).child("age").setValue(age);
-            Log.d("AGE", age);
+        // Update only the changed fields
+        Map<String, Object> updates = new HashMap<>();
+        if (!TextUtils.isEmpty(userProfile.getAge())) {
+            updates.put("age", userProfile.getAge());
         }
-        if (!TextUtils.isEmpty(goal)) {
-            reference.child(userId).child("cadenceGoal").setValue(goal);
-            Log.d("GOAL", goal);
+        if (!TextUtils.isEmpty(userProfile.getWeight())) {
+            updates.put("weight", userProfile.getWeight());
         }
-        if (!TextUtils.isEmpty(email)) {
-            reference.child(userId).child("email").setValue(email);
-            Log.d("EMAIL", email);
+        if (!TextUtils.isEmpty(userProfile.getHeight())) {
+            updates.put("height", userProfile.getHeight());
         }
-        if (!TextUtils.isEmpty(firstName)) {
-            reference.child(userId).child("firstname").setValue(firstName);
-            Log.d("FIRSTNAME", firstName);
+        if (!TextUtils.isEmpty(userProfile.getCadenceGoal())) {
+            updates.put("cadenceGoal", userProfile.getCadenceGoal());
         }
-        if (!TextUtils.isEmpty(lastName)) {
-            reference.child(userId).child("lastname").setValue(lastName);
-            Log.d("LASTNAME", lastName);
-        }
-        if (!TextUtils.isEmpty(height)) {
-            reference.child(userId).child("height").setValue(height);
-            Log.d("HEIGHT", height);
-        }
-        if (!TextUtils.isEmpty(weight)) {
-            reference.child(userId).child("weight").setValue(weight);
-            Log.d("WEIGHT", weight);
-        }
-
-
     }
 
+    private void displayUsersData(FirebaseUser user) {
+
+        String userId = user.getUid();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("Inside run snapshot", String.valueOf(snapshot));
+                if (snapshot.exists()) {
+                    String email = String.valueOf(snapshot.child("email").getValue());
+                    String firstName = String.valueOf(snapshot.child("firstname").getValue());
+                    String lastName = String.valueOf(snapshot.child("lastname").getValue());
+
+                    // Set retrieved data to TextViews
+                    textEmail.setText(email);
+                    textFirstName.setText(firstName);
+                    textLastName.setText(lastName);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("EditProfile", "Error fetching user data", error.toException());
+            }
+        });
+    }
 
 }

@@ -1,6 +1,6 @@
 package edu.northeastern.rhythmrun;
 
-public class CreateUserInDB {
+public class UserProfile {
 
     private String firstname;
     private String lastname;
@@ -12,11 +12,11 @@ public class CreateUserInDB {
     private String cadenceGoal;
 
     // for firebase
-    public CreateUserInDB(){
+    public UserProfile(){
 
     }
 
-    public CreateUserInDB(String firstname, String lastname, String age, String height, String weight, String email, String password) {
+    public UserProfile(String firstname, String lastname, String age, String height, String weight, String email, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.age = age;
@@ -27,7 +27,7 @@ public class CreateUserInDB {
         this.cadenceGoal = "Beginner";
     }
 
-    public CreateUserInDB(String firstname, String lastname, String age, String height, String weight, String email, String password, String cadenceGoal) {
+    public UserProfile(String firstname, String lastname, String age, String height, String weight, String email, String password, String cadenceGoal) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.age = age;
@@ -71,4 +71,35 @@ public class CreateUserInDB {
         return cadenceGoal;
     }
 
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setCadenceGoal(String cadenceGoal) {
+        this.cadenceGoal = cadenceGoal;
+    }
 }

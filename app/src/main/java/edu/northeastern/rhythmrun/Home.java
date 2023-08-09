@@ -7,21 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -93,14 +86,16 @@ public class Home extends AppCompatActivity {
 
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
-		//fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
+		fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
 		// TODO For testing only -- Remove from production and use the above instead
+		/*
 		fabButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				AddRunData(view);
 			}
 		});
+		*/
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -118,7 +113,7 @@ public class Home extends AppCompatActivity {
 		reference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				CreateUserInDB user = snapshot.getValue(CreateUserInDB.class);
+				UserProfile user = snapshot.getValue(UserProfile.class);
 
 				if(user != null){
 					// external picture uses Picasso
@@ -262,7 +257,7 @@ public class Home extends AppCompatActivity {
 					runsList.add(run);
 				}
 
-				// Reverse the list to display most recent run is first (by date)
+				// Reverse the list to display most recent run first (order by date)
 				Collections.reverse(runsList);
 
 				// Update the RecyclerView after fetching all runs
@@ -286,8 +281,7 @@ public class Home extends AppCompatActivity {
 		// Get the current user ID
 		String userUid = currentUser.getUid();
 
-		// Generate the current date (you can use your preferred date format)
-		String currentDate = getCurrentDate(); // Implement the method getCurrentDate()
+		String currentDate = getCurrentDate();
 
 		// Add hardcoded values for time, distance, avgCadence, and avgPace
 		String distance = "10.0";
@@ -313,22 +307,15 @@ public class Home extends AppCompatActivity {
 
 		// Add the run data to the "Runs" node for the current user
 		userRunsRef.child(runId).setValue(runData)
-				.addOnSuccessListener(new OnSuccessListener<Void>() {
-					@Override
-					public void onSuccess(Void aVoid) {
-						// Data added successfully
-						Toast.makeText(Home.this, "Run data added successfully", Toast.LENGTH_SHORT).show();
-					}
+				.addOnSuccessListener(aVoid -> {
+					// Data added successfully
+					Toast.makeText(Home.this, "Run data added successfully", Toast.LENGTH_SHORT).show();
 				})
-				.addOnFailureListener(new OnFailureListener() {
-					@Override
-					public void onFailure(@NonNull Exception e) {
-						Toast.makeText(Home.this, "Failed to add run data", Toast.LENGTH_SHORT).show();
-					}
-				});
+				.addOnFailureListener(e -> Toast.makeText(Home.this, "Failed to add run data", Toast.LENGTH_SHORT).show());
 	}
 
 	// TODO For testing only -- Remove for production
+	// Get the current date
 	private String getCurrentDate() {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 		Date date = new Date();

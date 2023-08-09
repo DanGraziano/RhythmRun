@@ -162,12 +162,12 @@ public class CreateAccount extends AppCompatActivity {
 					currentUser.updateProfile(profileChangeRequest);
 
 					// Create currentUser in Realtime DB
-					CreateUserInDB createUserInDB = new CreateUserInDB(firstName,lastname,age,height,weight,email,password);
+					UserProfile userProfile = new UserProfile(firstName,lastname,age,height,weight,email,password);
 
 					DatabaseReference allUsersRegistered = FirebaseDatabase.getInstance().getReference("Users");
 
 					// creates user in DB
-					allUsersRegistered.child(currentUser.getUid()).setValue(createUserInDB).addOnCompleteListener(new OnCompleteListener<Void>() {
+					allUsersRegistered.child(currentUser.getUid()).setValue(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
 						@Override
 						public void onComplete(@NonNull Task<Void> task) {
 

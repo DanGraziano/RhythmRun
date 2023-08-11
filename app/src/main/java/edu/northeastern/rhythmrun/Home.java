@@ -87,15 +87,6 @@ public class Home extends AppCompatActivity {
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
 		fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
-		// TODO For testing only -- Remove from production and use the above instead
-		/*
-		fabButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				AddRunData(view);
-			}
-		});
-		*/
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -274,52 +265,6 @@ public class Home extends AppCompatActivity {
 				// Handle errors if needed
 			}
 		});
-	}
-
-	// TODO For testing only -- Remove for production
-	public void AddRunData(View view) {
-		// Get the current user ID
-		String userUid = currentUser.getUid();
-
-		String currentDate = getCurrentDate();
-
-		// Add hardcoded values for time, distance, avgCadence, and avgPace
-		String distance = "10.0";
-		String time = "70:00";
-		String avgCadence = "180";
-		String avgPace = "7:00";
-
-		// Get a reference to the "Runs" node for the current user
-		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("Users")
-				.child(userUid)
-				.child("Runs");
-
-		// Generate a unique ID for the new run entry
-		String runId = userRunsRef.push().getKey();
-
-		// Create a HashMap to store the run data
-		HashMap<String, Object> runData = new HashMap<>();
-		runData.put("date", currentDate);
-		runData.put("distance", distance);
-		runData.put("avgCadence", avgCadence);
-		runData.put("avgPace", avgPace);
-		runData.put("time", time);
-
-		// Add the run data to the "Runs" node for the current user
-		userRunsRef.child(runId).setValue(runData)
-				.addOnSuccessListener(aVoid -> {
-					// Data added successfully
-					Toast.makeText(Home.this, "Run data added successfully", Toast.LENGTH_SHORT).show();
-				})
-				.addOnFailureListener(e -> Toast.makeText(Home.this, "Failed to add run data", Toast.LENGTH_SHORT).show());
-	}
-
-	// TODO For testing only -- Remove for production
-	// Get the current date
-	private String getCurrentDate() {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-		Date date = new Date();
-		return dateFormat.format(date);
 	}
 
 }

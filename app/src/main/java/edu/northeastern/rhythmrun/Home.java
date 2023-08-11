@@ -86,7 +86,10 @@ public class Home extends AppCompatActivity {
 
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
-		fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
+		fabButton.setOnClickListener(v -> {
+			Intent intent = new Intent(Home.this, StartWorkout.class);
+			startActivity(intent);
+		});
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);

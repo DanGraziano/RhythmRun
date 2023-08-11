@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id ="@+id/mediaFrag"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MediaPlayerFragment">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_prev"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/baseline_skip_previous_24" />
+
+
+        <ImageButton
+            android:id="@+id/btn_play"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/baseline_play_arrow_24" />
+
+
+        <ImageButton
+            android:id="@+id/btn_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+        android:src="@drawable/baseline_skip_next_24" />
+    </LinearLayout>
+
+</FrameLayout>

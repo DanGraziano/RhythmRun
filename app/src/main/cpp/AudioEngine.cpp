@@ -6,6 +6,10 @@
 #include "AudioEngine.h"
 #include <thread>
 #include <mutex>
+#include <iostream>
+#include <chrono>
+#include <android/log.h>
+
 
 // Double-buffering offers a good tradeoff between latency and protection against glitches.
 constexpr int32_t kBufferSizeInBursts = 2;
@@ -17,6 +21,7 @@ aaudio_data_callback_result_t dataCallback(
         int32_t numFrames) {
 
     ((Oscillator *) (userData))->render(static_cast<float *>(audioData), numFrames);
+    //((Oscillator *)) (userData))->countBuffer(bufferSize)
     return AAUDIO_CALLBACK_RESULT_CONTINUE;
 }
 
@@ -33,7 +38,7 @@ void errorCallback(AAudioStream *stream,
 }
 
 bool AudioEngine::start() {
-    //Create stream and configure settings
+    //Stream builder
     AAudioStreamBuilder *streamBuilder;
     AAudio_createStreamBuilder(&streamBuilder);
     AAudioStreamBuilder_setFormat(streamBuilder, AAUDIO_FORMAT_PCM_FLOAT);
@@ -42,9 +47,10 @@ bool AudioEngine::start() {
     AAudioStreamBuilder_setDataCallback(streamBuilder, ::dataCallback, &oscillator_);
     AAudioStreamBuilder_setErrorCallback(streamBuilder, ::errorCallback, this);
 
+    // ---- Stream Settings ---- //
+
     // Opens the stream (Audio stream of the device).
     aaudio_result_t result = AAudioStreamBuilder_openStream(streamBuilder, &stream_);
-
     // Stops the stream and prints error.
     if (result != AAUDIO_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "AudioEngine", "Error opening stream %s",
@@ -52,25 +58,31 @@ bool AudioEngine::start() {
         return false;
     }
 
-    // Retrieves the sample rate of the stream for our oscillator.
+    // SAMPLE RATE INFO //
+    //Gets the sample rate 48,000
     int32_t sampleRate = AAudioStream_getSampleRate(stream_);
-    oscillator_.setSampleRate(sampleRate);
 
-    // Sets the buffer size.
+    //Provide Oscillator Sample Rate of 48000
+    oscillator_.setSampleRate(sampleRate);
+    oscillator_.setBpm(60);
+    oscillator_.setInterval(sampleRate);
+
+
+    //BUFFER INFO //
+    // Sets the buffer size Size = 1920;
     AAudioStream_setBufferSizeInFrames(
             stream_, AAudioStream_getFramesPerBurst(stream_) * kBufferSizeInBursts);
 
-    // Starts the stream.
+    //Gets Buffer size
+     bufferSize = AAudioStream_getBufferSizeInFrames(stream_);
+
+    // Starts the stream //
     result = AAudioStream_requestStart(stream_);
     if (result != AAUDIO_OK) {
         __android_log_print(ANDROID_LOG_ERROR, "AudioEngine", "Error starting stream %s",
                             AAudio_convertResultToText(result));
         return false;
     }
-
-    //TODO: Figure out sample rate, interval = 60.00(time) / bpm * SampleRate (gets the target bpm according to sample rate)
-
-
 
     AAudioStreamBuilder_delete(streamBuilder);
     return true;

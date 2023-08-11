@@ -2,7 +2,7 @@
     <string name="app_name">RhythmRun</string>
     <string name="startWorkoutTitle">Run</string>
     <string name="Start">Start</string>
-    <string name="tap_anywhere">Tao Anywhere</string>
+    <string name="tap_anywhere">Tap Anywhere</string>
 
     <string-array name="options">
         <item>Beginner</item>

@@ -4,23 +4,21 @@
 #include <jni.h>
 #include <android/input.h>
 #include "AudioEngine.h"
+#include <iostream>
+#include <thread>
 
 static AudioEngine *audioEngine = new AudioEngine();
 
 extern "C" {
 
     JNIEXPORT void JNICALL
-    Java_edu_northeastern_rhythmrun_MetronomeTest_touchEvent(JNIEnv *env, jobject obj, jint action) {
-        switch (action) {
-            case AMOTION_EVENT_ACTION_DOWN:
+    Java_edu_northeastern_rhythmrun_MetronomeTest_startMetronome(JNIEnv *env, jobject  /* this */) {
                 audioEngine->setToneOn(true);
-                break;
-            case AMOTION_EVENT_ACTION_UP:
-                audioEngine->setToneOn(false);
-                break;
-            default:
-                break;
-        }
+    }
+
+    JNIEXPORT void JNICALL
+    Java_edu_northeastern_rhythmrun_MetronomeTest_stopMetronome(JNIEnv *env, jobject  /* this */) {
+        audioEngine->setToneOn(false);
     }
 
     JNIEXPORT void JNICALL

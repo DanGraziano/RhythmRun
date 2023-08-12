@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -50,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
+public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallback, LocationListener, SensorEventListener {
 
 	private TextView targetSPM;
 	FusedLocationProviderClient fusedLocationProviderClient;
@@ -104,6 +106,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private double totalPaceDistance = 0.0; // Total distance covered for calculating average pace
 
 	//----------------------------
+	private Sensor stepDetectorSensor;
 
 
 	@Override
@@ -124,6 +127,9 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		SPMSelector = findViewById(R.id.spinner);
 		spmGear = findViewById(R.id.spmGear);
 
+		stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+
+		sensorManager.registerListener(this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
 
 		SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map));
@@ -166,6 +172,12 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			public void onClick(View v) {
 				// Perform actions to end the workout, e.g., save data, stop tracking, etc.
 				// TODO: add stats activity screen
+
+				//sensorManager.unregisterListener(stepDetectorSensor.);
+				// Stop updating the cadence
+				handler.removeCallbacks(updateTimerRunnable);
+				// Unregister the step detector listener
+				sensorManager.unregisterListener(ActiveWorkout.this, stepDetectorSensor);
 				//stopTracking();
 				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
@@ -182,12 +194,14 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.resume));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gps_status_ready));
 					isPaused = true;
+					sensorManager.registerListener(ActiveWorkout.this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
 					Toast.makeText(ActiveWorkout.this, "Workout Paused", Toast.LENGTH_SHORT).show();
 				} else if (isPaused) {
 					startTimer();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pause));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.pause));
 					isPaused = false;
+					sensorManager.unregisterListener(ActiveWorkout.this, stepDetectorSensor);
 					Toast.makeText(ActiveWorkout.this, "Workout Resumed", Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -333,54 +347,43 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		// Request location updates from the location manager
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.0F, this::onLocationChanged);
 
-		currentCadenceNumber = findViewById(R.id.currentCadenceNumber);
 
 		// Get an instance of the SensorManager
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		// Get the step detector sensor
 		stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
-
+	}
 		// TODO TBD if this should be on a different thread
-		Runnable updateCadenceRunnable = new Runnable() {
-			@Override
-			public void run() {
-				// Calculate the cadence
-				double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - pauseDuration);
-				// Update UI with new cadence
-				updateCadence(cadence);
-				// Schedule the next update
-				handler.postDelayed(this, 1000);
-			}
-		};
+//		Runnable updateCadenceRunnable = new Runnable() {
+//			@Override
+//			public void run() {
+//				// Calculate the cadence
+//				double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - pauseDuration);
+//				// Update UI with new cadence
+//				updateCadence(cadence);
+//				// Schedule the next update
+//				handler.postDelayed(this, 1000);
+//			}
+//		};
 
-		// TODO add correct start id or if no start button add to onCreate
-		Button startButton = findViewById(R.id.startButton);
-		startButton.setOnClickListener(v -> {
-			// Start step detector listener on start button click
-			sensorManager.registerListener(this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
-			// Record start time
-			startTime = System.currentTimeMillis();
-			// Start updating the cadence
-			handler.post(updateCadenceRunnable);
-		});
 
-		Button stopButton = findViewById(R.id.endButton);
-		stopButton.setOnClickListener(v -> {
-			// Stop step detector listener on end button click
-			sensorManager.unregisterListener(this, stepDetectorSensor);
-			// Stop updating the cadence
-			handler.removeCallbacks(updateCadenceRunnable);
-			double averageCadence = calculateCadence(stepCount, startTime, System.currentTimeMillis());
-			// TODO maybe store this in DB so we can show it on the post-workout screen
-		});
+
+//		stopButton.setOnClickListener(v -> {
+//			// Stop step detector listener on end button click
+//			sensorManager.unregisterListener(this, stepDetectorSensor);
+//			// Stop updating the cadence
+//			handler.removeCallbacks(updateCadenceRunnable);
+//			double averageCadence = calculateCadence(stepCount, startTime, System.currentTimeMillis());
+//			// TODO maybe store this in DB so we can show it on the post-workout screen
+//		});
 
 		// Pause/resume step dectector listener on pause button press
-		Button pauseButton = findViewById(R.id.pause);
-		pauseButton.setOnClickListener(v -> {
-			togglePause();
-		});
-	}
+//		Button pauseButton = findViewById(R.id.pause);
+//		pauseButton.setOnClickListener(v -> {
+//			togglePause();
+//		});
+//	}
 
 	private void updateDistance(Location location) {
 		if (location != null) {
@@ -435,13 +438,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		handler.post(updateTimerRunnable);
 	}
 
-	// Pauses the timer
-	private void pauseTimer() {
-		if (!isPaused) {
-			handler.removeCallbacks(updateTimerRunnable);
-			timePaused = SystemClock.uptimeMillis();
-		}
-	}
 
 	// Timer thread to update the UI thread display
 
@@ -478,10 +474,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 
 
-}
-
-
-
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
@@ -495,7 +487,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// No need to overide. Required for interface
 	}
-
 	// Calculate overall cadence of run
 	private double calculateCadence(int stepCount, long startTime, long endTime) {
 		double elapsedTimeInMinutes = (endTime - startTime) / 60000.0;
@@ -505,23 +496,20 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private void updateCadence(double cadence) {
 		// Update UI with new cadence using full numbers only
 		String cadenceText = String.format(Locale.US, "%.0f steps per minute", cadence);
-		currentCadenceNumber.setText(cadenceText);
+		currentCadence.setText(cadenceText);
 	}
 
 	// Toggle step listener on/off
-	private void togglePause() {
-		if (isPaused) {
-			isPaused = false;
+	private void pauseTimer() {
+		if (!isPaused) {
+			handler.removeCallbacks(updateTimerRunnable);
+			timePaused = SystemClock.uptimeMillis();
 			// Resume the step listener
 			sensorManager.registerListener(this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
 			// Calculate paused duration
-			pauseDuration += System.currentTimeMillis() - pauseTime;
-		} else {
-			isPaused = true;
-			// Pause the step listener
+		} else {// Pause the step listener
 			sensorManager.unregisterListener(this, stepDetectorSensor);
 			// Store the pause start time
-			pauseTime = System.currentTimeMillis();
 		}
 	}
 }

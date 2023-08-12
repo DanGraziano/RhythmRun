@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -22,6 +24,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class CreateAccount extends AppCompatActivity {
 
@@ -51,14 +55,34 @@ public class CreateAccount extends AppCompatActivity {
 		heightInputLayout = findViewById(R.id.heightInputLayout);
 		weightInputLayout = findViewById(R.id.weightInputLayout);
 
-
-
 		createAccountBtn = findViewById(R.id.createAccountBtn);
 		logInBtn = findViewById(R.id.logInBtn);
 
 		logInBtn.setOnClickListener(v-> startActivity(new Intent(CreateAccount.this, Login.class)));
 		createAccountBtn.setOnClickListener(v -> checkUserInputs());
 
+		passwordInputLayout.setEndIconOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				togglePasswordVisibility(inputPassword, passwordInputLayout);
+			}
+		});
+	}
+
+	private void togglePasswordVisibility(TextInputEditText passwordEditText, TextInputLayout passwordLayout) {
+		if (passwordEditText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+			// Show password
+			passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+			passwordLayout.setEndIconDrawable(R.drawable.ic_hide_password);
+
+		}
+		else {
+			// Hide password
+			passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+			passwordLayout.setEndIconDrawable(R.drawable.ic_show_password);
+		}
+		// Move the cursor to the end of the password input field
+		passwordEditText.setSelection(Objects.requireNonNull(passwordEditText.getText()).length());
 	}
 
 	private void checkUserInputs() {
@@ -138,12 +162,12 @@ public class CreateAccount extends AppCompatActivity {
 					currentUser.updateProfile(profileChangeRequest);
 
 					// Create currentUser in Realtime DB
-					CreateUserInDB createUserInDB = new CreateUserInDB(firstName,lastname,age,height,weight,email,password);
+					UserProfile userProfile = new UserProfile(firstName,lastname,age,height,weight,email,password);
 
 					DatabaseReference allUsersRegistered = FirebaseDatabase.getInstance().getReference("Users");
 
 					// creates user in DB
-					allUsersRegistered.child(currentUser.getUid()).setValue(createUserInDB).addOnCompleteListener(new OnCompleteListener<Void>() {
+					allUsersRegistered.child(currentUser.getUid()).setValue(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
 						@Override
 						public void onComplete(@NonNull Task<Void> task) {
 

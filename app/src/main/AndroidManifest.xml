@@ -2,58 +2,64 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_rhythm_run_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_rhythm_run_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RhythmRun"
-        tools:targetApi="31">
-        <activity
-            android:name=".RunStats"
-            android:exported="false" />
-
+        tools:targetApi="31"
+        android:screenOrientation="portrait">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDsGGFZ_KqLhoodT1thq1jIQDUkx0Vf_ls" />
-
+            android:value="AIzaSyDsGGFZ_KqLhoodT1thq1jIQDUkx0Vf_ls"/>
         <activity
             android:name=".ForgotPassword"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".EditProfile"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ChangeProfilePicture"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Home"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".PostWorkout"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ActiveWorkout"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Settings"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".StartWorkout"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CreateAccount"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Login"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -61,9 +67,9 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".StartWorkout"
-            android:foregroundServiceType="location" />
+        <service android:name="StartWorkout"
+            android:foregroundServiceType="location"
+            />
     </application>
 
 </manifest>

@@ -2,16 +2,18 @@ package edu.northeastern.rhythmrun;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,23 +27,24 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class Home extends AppCompatActivity {
 
 	ArrayList<RunModel> runsList = new ArrayList<>();
 	RecyclerView recyclerView;
-	ImageView profileImage, oneMileRun, threeMileRun, fiveKRun, tenKRun, fityMileRun;
+	ImageView profileImage, oneMileRun, halfMarathonRun, fiveKRun, tenKRun, fiftyMileRun, signUpBadge;
 	FloatingActionButton fabButton;
 	BottomNavigationView bottomNavigationView;
 	TextView username;
 	FirebaseUser currentUser;
-
-	// TODO Make Recycler clickable and new activity
-	// TODO Make nicer color and text the group will need to decide that
-	// TODO maybe a on hoover listener for badges to give user context
-	// TODO maybe add a loading spinner to make transitions nicer
+	private PopupWindow tooltipPopup; // Declare the tooltipPopup variable here
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +55,18 @@ public class Home extends AppCompatActivity {
 		recyclerView = findViewById(R.id.runHistoryRecy);
 		profileImage = findViewById(R.id.profileImage);
 		oneMileRun = findViewById(R.id.oneMileBadge);
-		threeMileRun = findViewById(R.id.threeMileBadge);
+		halfMarathonRun = findViewById(R.id.halfMarathonBadge);
 		fiveKRun = findViewById(R.id.fiveKBadge);
 		tenKRun = findViewById(R.id.tenKBadge);
-		fityMileRun = findViewById(R.id.fiftyMileBadge);
+		fiftyMileRun = findViewById(R.id.fiftyMileBadge);
+		signUpBadge = findViewById(R.id.signingUpBadge);
 
+		signUpBadge.setOnClickListener(v -> showTooltip(v, getString(R.string.sign_up_badge_tooltip)));
+		oneMileRun.setOnClickListener(v -> showTooltip(v, getString(R.string.one_mile_badge_tooltip)));
+		fiveKRun.setOnClickListener(v -> showTooltip(v, getString(R.string.five_k_badge_tooltip)));
+		tenKRun.setOnClickListener(v -> showTooltip(v, getString(R.string.ten_k_badge_tooltip)));
+		halfMarathonRun.setOnClickListener(v -> showTooltip(v, getString(R.string.half_marathon_badge_tooltip)));
+		fiftyMileRun.setOnClickListener(v -> showTooltip(v, getString(R.string.fifty_mile_badge_tooltip)));
 
 		profileImage.setOnClickListener(v-> new Intent(Home.this, ChangeProfilePicture.class));
 
@@ -76,12 +86,19 @@ public class Home extends AppCompatActivity {
 
 		// KEEP -- Used for floating action button on click
 		fabButton = findViewById(R.id.startWorkoutFab);
-		fabButton.setOnClickListener(v -> new Intent(Home.this, StartWorkout.class));
+		fabButton.setOnClickListener(v -> {
+			Intent intent = new Intent(Home.this, StartWorkout.class);
+			startActivity(intent);
+		});
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
 		setupNavBar();
 
+	}
+
+	private void showTooltip(View anchorView, String tooltipText) {
+		TooltipCompat.setTooltipText(anchorView, tooltipText);
 	}
 
 	private void showUserProfile(FirebaseUser firebaseUser){
@@ -90,7 +107,7 @@ public class Home extends AppCompatActivity {
 		reference.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot snapshot) {
-				CreateUserInDB user = snapshot.getValue(CreateUserInDB.class);
+				UserProfile user = snapshot.getValue(UserProfile.class);
 
 				if(user != null){
 					// external picture uses Picasso
@@ -139,7 +156,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibilityOneMile(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >=1 && distanceInMiles < 3 ) {
+			if (distanceInMiles >=1 ) {
 				oneMileRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -147,21 +164,21 @@ public class Home extends AppCompatActivity {
 		}
 	}
 
-	public void checkAndSetBadgeVisibilityThreeMile(String distance) {
+	public void checkAndSetBadgeVisibilityHalfMarathon(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 3.0 && distanceInMiles < 3.1) {
-				threeMileRun.setAlpha(1.0f);
+			if (distanceInMiles >= 13.1) {
+				halfMarathonRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
-			threeMileRun.setAlpha(0.15f);
+			halfMarathonRun.setAlpha(0.15f);
 		}
 	}
 
 	public void checkAndSetBadgeVisibility5K(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 3.1 && distanceInMiles < 6.2) {
+			if (distanceInMiles >= 3.1) {
 				fiveKRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -172,7 +189,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibility10K(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 6.2 && distanceInMiles < 50) {
+			if (distanceInMiles >= 6.2) {
 				tenKRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -184,33 +201,35 @@ public class Home extends AppCompatActivity {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
 			if (distanceInMiles >= 50) {
-				fityMileRun.setAlpha(1.0f);
+				fiftyMileRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
-			fityMileRun.setAlpha(0.15f);
+			fiftyMileRun.setAlpha(0.15f);
 		}
 	}
 
 
 	public void checkBadgeSystem(String distance) {
 		checkAndSetBadgeVisibilityOneMile(distance);
-		checkAndSetBadgeVisibilityThreeMile(distance);
+		checkAndSetBadgeVisibilityHalfMarathon(distance);
 		checkAndSetBadgeVisibility5K(distance);
 		checkAndSetBadgeVisibility10K(distance);
 		checkAndSetBadgeVisibility50K(distance);
 	}
 
-
 	private void setupRunModels() {
-
 		if (currentUser == null) {
 			// User is not logged in, handle the case appropriately
 			return;
 		}
 
 		String userUid = currentUser.getUid();
-		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("UserRunsMapping");
-		Query userRunsQuery = userRunsRef.orderByChild("user").equalTo(userUid);
+		DatabaseReference userRunsRef = FirebaseDatabase.getInstance().getReference("Users")
+				.child(userUid)
+				.child("Runs");
+
+		// Order runs by date
+		Query userRunsQuery = userRunsRef.orderByChild("date");
 
 		userRunsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
@@ -218,53 +237,29 @@ public class Home extends AppCompatActivity {
 				// Clear the list before adding new items to avoid duplication
 				runsList.clear();
 
-				if (dataSnapshot.exists()) {
-					for (DataSnapshot userRunSnapshot : dataSnapshot.getChildren()) {
-						HashMap<String, Object> userRunData = (HashMap<String, Object>) userRunSnapshot.getValue();
+				for (DataSnapshot runSnapshot : dataSnapshot.getChildren()) {
+					// Fetch the run details from the snapshot
+					String date = String.valueOf(runSnapshot.child("date").getValue());
+					String distance = String.valueOf(runSnapshot.child("distance").getValue());
+					checkBadgeSystem(distance);
+					String avgCadence = String.valueOf(runSnapshot.child("avgCadence").getValue());
+					String avgPace = String.valueOf(runSnapshot.child("avgPace").getValue());
+					String time = String.valueOf(runSnapshot.child("time").getValue());
 
-						// Get the value of the "user" field (assuming "user" is a key in the HashMap)
-						String runId = (String) userRunData.get("run");
+					// Add the RunModel to the runsList
+					RunModel run = new RunModel(date, distance, avgCadence, avgPace, time);
+					runsList.add(run);
+				}
 
-						// Query the "Runs" table to get details of the current run
-						DatabaseReference runsRef = FirebaseDatabase.getInstance().getReference("Runs")
-								.child(runId);
-						runsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-							@Override
-							public void onDataChange(@NonNull DataSnapshot runSnapshot) {
-								if (runSnapshot.exists()) {
-									// Fetch the run details from the snapshot
-									Log.d("Inside run snapshot", String.valueOf(runSnapshot));
-									String date = String.valueOf(runSnapshot.child("date").getValue());
-									String distance = String.valueOf(runSnapshot.child("distance").getValue());
-									checkBadgeSystem(distance);
-									String cadenceTime = String.valueOf(runSnapshot.child("cadenceTime").getValue());
-									String pace = String.valueOf(runSnapshot.child("pace").getValue());
-									String calories = String.valueOf(runSnapshot.child("calories").getValue());
-									String time = String.valueOf(runSnapshot.child("time").getValue());
+				// Reverse the list to display most recent run first (order by date)
+				Collections.reverse(runsList);
 
-									// Add the RunModel to the runsList
-									RunModel run = new RunModel(date, distance, cadenceTime, pace, calories, time);
-									runsList.add(run);
-
-									// Update the RecyclerView after fetching all runs
-									if (runsList.size() == dataSnapshot.getChildrenCount()) {
-										RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
-										recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
-										RunAdapter runAdapter = new RunAdapter(runsList);
-										recyclerView.setAdapter(runAdapter);
-									}
-								}
-							}
-
-							@Override
-							public void onCancelled(@NonNull DatabaseError databaseError) {
-								// Handle errors if needed
-							}
-						});
-					}
-				} else {
-					// Handle the case when there are no runs associated with the user
-					// For example, you can show a message to the user or hide the RecyclerView
+				// Update the RecyclerView after fetching all runs
+				if (runsList.size() == dataSnapshot.getChildrenCount()) {
+					RecyclerView recyclerView = findViewById(R.id.runHistoryRecy);
+					recyclerView.setLayoutManager(new LinearLayoutManager(Home.this));
+					RunAdapter runAdapter = new RunAdapter(runsList, recyclerView);
+					recyclerView.setAdapter(runAdapter);
 				}
 			}
 
@@ -274,8 +269,5 @@ public class Home extends AppCompatActivity {
 			}
 		});
 	}
-
-
-
 
 }

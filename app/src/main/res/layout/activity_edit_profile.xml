@@ -54,7 +54,7 @@
                 android:text="Email"
                 android:textSize="20sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/textEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,13 +73,13 @@
                 android:text="First Name"
                 android:textSize="20sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/textFirstName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textPlaceHolderEmail"
-                android:padding="1dp"
                 android:layout_centerHorizontal="true"
+                android:padding="1dp"
                 android:textSize="20sp" />
 
             <TextView
@@ -92,13 +92,13 @@
                 android:text="Last Name "
                 android:textSize="20sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/textLastName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textPlaceHolderFirstName"
-                android:padding="1dp"
                 android:layout_centerHorizontal="true"
+                android:padding="1dp"
                 android:textSize="20sp" />
 
             <TextView
@@ -108,16 +108,17 @@
                 android:layout_below="@id/textPlaceHolderLastName"
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="30dp"
-                android:text="Age "
+                android:text="Set Age "
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/textAge"
+                android:id="@+id/editAge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textPlaceHolderLastName"
-                android:padding="1dp"
                 android:layout_centerHorizontal="true"
+                android:inputType="number"
+                android:padding="1dp"
                 android:textSize="20sp" />
 
             <TextView
@@ -127,16 +128,17 @@
                 android:layout_below="@id/textPlaceHolderAge"
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="30dp"
-                android:text="Weight"
+                android:text="Set Weight"
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/textWeight"
+                android:id="@+id/editWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textPlaceHolderAge"
-                android:padding="1dp"
                 android:layout_centerHorizontal="true"
+                android:inputType="numberDecimal"
+                android:padding="1dp"
                 android:textSize="20sp" />
 
             <TextView
@@ -146,16 +148,17 @@
                 android:layout_below="@id/textPlaceHolderWeight"
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="30dp"
-                android:text="Height"
+                android:text="Set Height"
                 android:textSize="20sp" />
 
             <EditText
-                android:id="@+id/textHeight"
+                android:id="@+id/editHeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textPlaceHolderWeight"
-                android:padding="1dp"
                 android:layout_centerHorizontal="true"
+                android:inputType="numberDecimal"
+                android:padding="1dp"
                 android:textSize="20sp" />
 
 
@@ -166,7 +169,7 @@
                 android:layout_below="@id/textPlaceHolderHeight"
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="30dp"
-                android:text="Set Cadence Goal"
+                android:text="Cadence Goal"
                 android:textSize="20sp" />
 
             <Spinner
@@ -174,7 +177,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textPlaceHolderHeight"
-                android:layout_alignBottom ="@id/textPlaceholderCadenceDifficulty"
+                android:layout_alignBottom="@id/textPlaceholderCadenceDifficulty"
                 android:layout_centerHorizontal="true"
                 android:layout_toRightOf="@id/textPlaceholderCadenceDifficulty"
                 android:entries="@array/options"
@@ -185,8 +188,8 @@
                 android:id="@+id/saveProfileBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/textPlaceholderCadenceDifficulty"
+                android:layout_centerHorizontal="true"
                 android:text="Save" />
 
 

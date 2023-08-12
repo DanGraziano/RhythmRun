@@ -1,26 +1,17 @@
 package edu.northeastern.rhythmrun;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,30 +21,39 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-public class ActiveWorkout extends AppCompatActivity {
+public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
 	private TextView targetSPM;
+	FusedLocationProviderClient fusedLocationProviderClient;
+
+	//Location variables
+	private LocationCallback locationCallBack;
+	LocationRequest locationRequest;
+
 
 	private TextView currentCadence;
 	private TextView currentTime;
@@ -78,6 +78,29 @@ public class ActiveWorkout extends AppCompatActivity {
 	private long startTime;
 	private long timePaused = 0;
 
+	private Boolean isFirstPull = true;
+
+
+	//------------------------------------------------
+	private GoogleMap googleMap;
+	private FusedLocationProviderClient fusedLocationClient;
+	private LocationCallback locationCallback;
+	private Polyline routePolyline;
+	private static final int REQUEST_LOCATION_PERMISSION = 1001;
+
+	//----------------live location variables
+	private LocationManager locationManager;
+
+	//----------trailing mile and avg pace time vars an
+
+	private long lastMileTime = 0;
+	private double lastMileDistance = 0.0;
+	private long totalElapsedTime = 0; // Total elapsed time in milliseconds
+	private double totalPaceDistance = 0.0; // Total distance covered for calculating average pace
+
+	//----------------------------
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,6 +119,33 @@ public class ActiveWorkout extends AppCompatActivity {
 		SPMSelector = findViewById(R.id.spinner);
 		spmGear = findViewById(R.id.spmGear);
 
+
+
+		SupportMapFragment mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map));
+		if (mapFragment != null) {
+			mapFragment.getMapAsync(this);
+		}
+		fusedLocationClient = LocationServices.getFusedLocationProviderClient(ActiveWorkout.this);
+
+		locationCallback = new LocationCallback() {
+			@Override
+			public void onLocationResult(LocationResult locationResult) {
+				if (locationResult != null) {
+					// Handle new location updates here
+					updateMap(locationResult.getLastLocation());
+				}
+			}
+		};
+
+		// Initialize the location request
+		locationRequest = LocationRequest.create()
+				.setInterval(5000) // Update interval in milliseconds
+				.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+		// Initialize the location manager
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
 		// Starts the timer for the run
 		handler = new Handler();
 		startTimer();
@@ -104,13 +154,6 @@ public class ActiveWorkout extends AppCompatActivity {
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-		// Initialize fragment
-		Fragment fragment = new Fragment();
-
-		// Display map fragment
-		getSupportFragmentManager()
-				.beginTransaction().replace(R.id.google_map, fragment)
-				.commit();
 
 		// Set click listener for the END button
 		end.setOnClickListener(new View.OnClickListener() {
@@ -209,10 +252,130 @@ public class ActiveWorkout extends AppCompatActivity {
 
 	}
 
+	//GPS functions block
+	//------------------------------------------------------------------------------------
+	@Override
+	public void onMapReady(GoogleMap googleMap) {
+		this.googleMap = googleMap;
+		googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+		// Start location updates
+		startLocationUpdates();
+	}
+	
+
+	private void updateMap(android.location.Location location) {
+		if (googleMap != null) {
+			LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+			if (routePolyline == null) {
+				routePolyline = googleMap.addPolyline(new PolylineOptions().color(Color.BLUE));
+			}
+
+			List<LatLng> points = routePolyline.getPoints();
+			points.add(currentLatLng);
+			routePolyline.setPoints(points);
+
+			if (isFirstPull) {
+				googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18));
+				isFirstPull = false;
+			}
+		}
+	}
+
+
+	// Override onRequestPermissionsResult to handle permission request result
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == REQUEST_LOCATION_PERMISSION) {
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				startLocationUpdates(); // Retry starting location updates
+			} else {
+				// Handle case where the user denies the permission
+			}
+		}
+	}
+
+//------------------------------------------------------------------------------------
+
+	//-----------------live location updates-------------
+
+	@Override
+	public void onLocationChanged(@NonNull Location location) {
+		updateMap(location);
+		updateDistance(location);
+	}
+
+
+	//	fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
+
+	private void startLocationUpdates() {
+
+		if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+				&& ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			// Request the missing permissions.
+			ActivityCompat.requestPermissions(this,
+					new String[]{
+							android.Manifest.permission.ACCESS_FINE_LOCATION,
+							android.Manifest.permission.ACCESS_COARSE_LOCATION
+					},
+					REQUEST_LOCATION_PERMISSION);
+			return;
+		}
+
+		// Request location updates from the location manager
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.0F, this::onLocationChanged);
+	}
+
+	private void updateDistance(Location location) {
+		if (location != null) {
+			if (routePolyline != null) {
+				List<LatLng> points = routePolyline.getPoints();
+				LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+				if (!points.isEmpty()) {
+					LatLng previousLatLng = points.get(points.size() - 1);
+					double distance = calculateDistance(previousLatLng, currentLatLng);
+					totalDistance += distance;
+					totalPaceDistance += distance; // Update total distance for average pace calculation
+
+					// Calculate trailing mile pace
+					if (totalPaceDistance > 0) {
+						long currentTime = SystemClock.uptimeMillis();
+						long mileTime = currentTime - lastMileTime;
+						lastMileTime = currentTime;
+
+						// Update average pace
+						long averagePaceTime = totalElapsedTime / (long) totalPaceDistance;
+						int paceMinutes = (int) (averagePaceTime / (60 * 1000));
+						int paceSeconds = (int) ((averagePaceTime / 1000) % 60);
+						String averagePace = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+						avgPace.setText(averagePace);
+					}
+				}
+				points.add(currentLatLng);
+				routePolyline.setPoints(points);
+				currentDistance.setText(String.format(Locale.getDefault(), "%.2f", totalDistance));
+			}
+		}
+	}
+
+
+	private float calculateDistance(LatLng start, LatLng end) {
+		float[] results = new float[1];
+		Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results);
+		return results[0];
+	}
+
+
+
+
 	// Start timer from system clock
 	private void startTimer() {
 		if (startTime == 0) {
 			startTime = SystemClock.uptimeMillis();
+			currentPace.setText("0.00");
 		} else {
 			startTime += (SystemClock.uptimeMillis() - timePaused);
 		}
@@ -228,6 +391,7 @@ public class ActiveWorkout extends AppCompatActivity {
 	}
 
 	// Timer thread to update the UI thread display
+
 	private Runnable updateTimerRunnable = new Runnable() {
 		public void run() {
 			long timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
@@ -235,6 +399,9 @@ public class ActiveWorkout extends AppCompatActivity {
 			int minutes = seconds / 60;
 			seconds %= 60;
 			int milliseconds = (int) (timeInMilliseconds % 1000);
+
+			// Update total elapsed time
+			totalElapsedTime = timeInMilliseconds;
 
 			String timerText = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
 			currentTime.setText(timerText);
@@ -250,65 +417,13 @@ public class ActiveWorkout extends AppCompatActivity {
 	}
 
 
+	// Starts GPS callback which will consistently update the position of the user.
+	@SuppressLint("MissingPermission")
+	private void startGPSUpdates(){
+		fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack,null);
+	}
+
+
+
 }
 
-
-//	// Register accelerometer listener onResume
-//	@Override
-//	protected void onResume() {
-//		super.onResume();
-//		if (accelerometer != null) {
-//			sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-//		}
-//	}
-//
-//	// Unregister accelerometer listener onPause
-//	@Override
-//	protected void onPause() {
-//		super.onPause();
-//		sensorManager.unregisterListener((SensorEventListener) this, accelerometer);
-//	}
-//
-//
-//	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//		// Do nothing for this example
-//	}
-//
-//	public void onSensorChanged(SensorEvent event) {
-//		// Calculate cadence based on accelerometer data
-//		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-//			float[] values = event.values;
-//			float x = values[0];
-//			float y = values[1];
-//			float z = values[2];
-//
-//			// Assuming cadence is related to step count (could be more complex in real-world scenarios)
-//			// You may need to calibrate these values based on your specific device and user behavior.
-//			if (Math.abs(x) > 8 || Math.abs(y) > 8 || Math.abs(z) > 8) {
-//				if (!isRunning) {
-//					isRunning = true;
-//					stepCount++;
-//					currentCadence.setText(String.valueOf(stepCount) + " SPM");
-//				}
-//			} else {
-//				isRunning = false;
-//			}
-//		}
-//	}
-//
-//	// Method to stop tracking and calculate average pace
-//	private void stopTracking() {
-//		calculateAvgPace();
-//	}
-//
-//	// Method to calculate average pace
-//	private void calculateAvgPace() {
-//		// Calculate average pace based on the total distance and total time taken.
-//		// For simplicity, let's assume you have already updated these values during the workout.
-//		double averagePaceInMinutes = totalTimeInSeconds / totalDistance;
-//
-//		// Update the TextView with the average pace in the format of minutes per mile.
-//		String avgPaceText = String.format(Locale.getDefault(), "%.2f", averagePaceInMinutes);
-//		avgPace.setText(avgPaceText + " min/mile");
-//	}
-//}

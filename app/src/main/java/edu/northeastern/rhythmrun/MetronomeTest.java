@@ -10,10 +10,6 @@ import android.media.AudioTrack;
 
 public class MetronomeTest extends AppCompatActivity {
 
-
-
-
-
     Button startBtn, stopBtn;
 
     @Override
@@ -25,4 +21,5 @@ public class MetronomeTest extends AppCompatActivity {
         stopBtn = findViewById(R.id.stopBtn);
 
 
+    }
 }

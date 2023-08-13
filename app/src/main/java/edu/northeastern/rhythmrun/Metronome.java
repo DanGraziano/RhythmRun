@@ -24,13 +24,13 @@ public class Metronome {
 
     public void play() {
         setSilence(60);
+        int t = 0, s = 0, b = 0;
         double[] tick =  MetronomeAudio.createTone(this.tick, 8000, sound);
         double silence = 0;
         double[] sound = new double[8000];
-        int t = 0,s = 0,b = 0;
         do {
             for (int i=0;i<sound.length&&metronomeOn;i++) {
-                if (t<this.tick) {
+                if (t < this.tick) {
                     sound[i] = tick[t];
                     t++;
                 } else {

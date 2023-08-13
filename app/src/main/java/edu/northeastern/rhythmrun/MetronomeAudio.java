@@ -23,7 +23,9 @@ public class MetronomeAudio {
         return sample;
     }
 
+    //Generates a 16PCM sound array.
     public static byte[] generateSound(double[] samples) {
+        //Creates double the buffer of the size of the audio sample
         byte[] sound = new byte[2 * samples.length];
         int index = 0;
         for (double sample : samples){
@@ -36,6 +38,8 @@ public class MetronomeAudio {
         return sound;
     }
 
+    //Create AudioTrack from the Android AudioTrack API
+    //Gives high priority to the sound and in a mono channel.
     public static void createAudioTrack(){
         audioTrack = new AudioTrack.Builder()
                 .setAudioAttributes(new AudioAttributes.Builder()
@@ -53,11 +57,13 @@ public class MetronomeAudio {
         audioTrack.play();
     }
 
+    //Fill the buffer with sound.
     public static void fillBuffer(double[] samples) {
         byte[] buffer = generateSound(samples);
         audioTrack.write(buffer, 0, buffer.length);
     }
 
+    //Destroys the audio channel.
     public static void destroyAudioTrack() {
         audioTrack.stop();
         audioTrack.release();

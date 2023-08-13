@@ -90,9 +90,6 @@ void Oscillator::setBpm(int mBpm){
     bpm = mBpm;
 }
 
-//void Oscillator::highResTimer(){
-//    //look up high res timer callback JUCE
-//}
 
 void Oscillator::countBuffer(int bufferSize){
     totalSamples += bufferSize;

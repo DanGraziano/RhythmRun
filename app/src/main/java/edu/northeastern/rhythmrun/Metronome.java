@@ -2,55 +2,80 @@ package edu.northeastern.rhythmrun;
 
 public class Metronome {
 
-    private int bpm;
     private int beat;
-    private int frequency;
-    private int silence;
-    private double sound;
-    private final int tick = 1000; // samples of tick
+    private static int silence;
+    private static final int tick = 1000; // samples of tick
 
-    private boolean metronomeOn = true;
-    private  MetronomeAudio sampleRate = new MetronomeAudio(44100);
-    
+    private static boolean metronomeOn = true;
+
     public Metronome(){
         MetronomeAudio.createAudioTrack();
         
     }
-    public void setSilence(int bpm){
-        String sampleRateStr = sampleRate.toString();
-        int sampleRateInt = Integer.parseInt(sampleRateStr);
-        silence = (((60/bpm) *  sampleRateInt) - tick);
+    public static void setBpm(int bpm){
+        //Equation that sets the beats per minute.
+        silence = ((60/bpm) *  44100);
     }
 
-    public void play() {
-        setSilence(60);
-        int t = 0, s = 0, b = 0;
-        double[] tick =  MetronomeAudio.createTone(this.tick, 8000, sound);
-        double silence = 0;
-        double[] sound = new double[8000];
-        do {
-            for (int i=0;i<sound.length&&metronomeOn;i++) {
-                if (t < this.tick) {
-                    sound[i] = tick[t];
-                    t++;
+    //Plays the metronome
+    public static void play(int bpm) {
+        //Sets the bpm
+        setBpm(bpm);
+
+        //Initialize ticks
+        int ticks = 0;
+        int silentTicks = 0;
+        int silence = 0;
+
+        //Generate the sound to be stored.
+        double[] tick =  MetronomeAudio.createTone(Metronome.tick, 8000, 440);
+        //create sound
+        double[] soundBuffer = new double[8000];
+
+        //Play metronome ticks size of soundBuffer until metronome is turned off.
+        while(metronomeOn) {
+            for (int i=0;i<soundBuffer.length&&metronomeOn;i++) {
+                //Fills the array with sound or silence
+                if (ticks < Metronome.tick) {
+                    soundBuffer[i] = tick[ticks];
+                    ticks++;
                 } else {
-                    sound[i] = silence;
-                    s++;
-                    if(s >= this.silence) {
-                        t = 0;
-                        s = 0;
-                        b++;
-                        if(b > (this.beat-1))
-                            b = 0;
+                    soundBuffer[i] = silence;
+                    silentTicks++;
+                    if(silentTicks >= Metronome.silence) {
+                        ticks = 0;
+                        silentTicks = 0;
                     }
                 }
             }
-            MetronomeAudio.fillBuffer(sound);
-        } while(metronomeOn);
+            //Once array is complete fill buffer.
+            MetronomeAudio.fillBuffer(soundBuffer);
+        }
     }
 
+    //creates a new audiotrack and sets the metronome on.
+    public void on() {
+        metronomeOn = true;
+        MetronomeAudio.createAudioTrack();
+    }
+
+    //Destroys the audio track so it is not abandoned
     public void stop() {
         metronomeOn = false;
         MetronomeAudio.destroyAudioTrack();
+    }
+
+
+    //Inner class that handles creating a thread for the Metronome play
+    public static class MetronomeThread implements Runnable{
+        int bpm;
+        MetronomeThread(int bpm){
+            this.bpm = bpm;
+        }
+        @Override
+        public void run() {
+            play(bpm);
+        }
+
     }
 }

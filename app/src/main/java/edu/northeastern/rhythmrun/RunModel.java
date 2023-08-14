@@ -6,6 +6,7 @@ public class RunModel {
     private String avgCadence;
     private String avgPace;
     private String time;
+    private String runId;
 
     public RunModel() {
         // Default constructor required for Firebase Realtime Database
@@ -17,6 +18,7 @@ public class RunModel {
         this.avgCadence = avgCadence;
         this.avgPace = avgPace;
         this.time = time;
+        this.runId = null;
     }
 
     public String getDate() {
@@ -37,5 +39,32 @@ public class RunModel {
 
     public String getTime() {
         return time;
+    }
+
+    public String getRunId() {
+        return runId;
+    }
+    public void setRunId(String runId) {
+        this.runId = runId;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public void setAvgCadence(String avgCadence) {
+        this.avgCadence = avgCadence;
+    }
+
+    public void setAvgPace(String avgPace) {
+        this.avgPace = avgPace;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

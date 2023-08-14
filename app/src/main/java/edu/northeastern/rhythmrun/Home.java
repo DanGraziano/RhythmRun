@@ -9,12 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,13 +25,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
 
 public class Home extends AppCompatActivity {
 
@@ -252,7 +244,14 @@ public class Home extends AppCompatActivity {
 					String time = String.valueOf(runSnapshot.child("time").getValue());
 
 					// Add the RunModel to the runsList
-					RunModel run = new RunModel(date, distance, avgCadence, avgPace, time);
+					RunModel run = new RunModel();
+					run.setRunId(runSnapshot.getKey());  // Set the run ID
+					run.setDate(date);
+					run.setDistance(distance);
+					run.setAvgCadence(avgCadence);
+					run.setAvgPace(avgPace);
+					run.setTime(time);
+
 					runsList.add(run);
 				}
 

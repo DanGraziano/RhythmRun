@@ -45,7 +45,6 @@ public class Home extends AppCompatActivity {
 	BottomNavigationView bottomNavigationView;
 	TextView username;
 	FirebaseUser currentUser;
-	private PopupWindow tooltipPopup; // Declare the tooltipPopup variable here
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +68,13 @@ public class Home extends AppCompatActivity {
 		halfMarathonRun.setOnClickListener(v -> showTooltip(v, getString(R.string.half_marathon_badge_tooltip)));
 		fiftyMileRun.setOnClickListener(v -> showTooltip(v, getString(R.string.fifty_mile_badge_tooltip)));
 
-		profileImage.setOnClickListener(v-> new Intent(Home.this, ChangeProfilePicture.class));
+		profileImage.setOnClickListener(v -> {
+			Intent intent = new Intent(Home.this, ChangeProfilePicture.class);
+			startActivity(intent);
+		});
 
-		 currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+		currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
 		if (currentUser != null) {
 			// User is signed in

@@ -28,10 +28,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.dynamicanimation.animation.SpringAnimation;
+
 import android.os.Handler;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.security.Key;
 import java.util.Locale;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,6 +50,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -172,6 +182,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		handler = new Handler();
 		startTimer();
 
+
+
 		// Set click listener for the END button
 		end.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -187,7 +199,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				metronome.stop();
 				handler.removeCallbacks(playMetronomeThread);
 				//stopTracking();
-				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
+				updateRunsDB();
 				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
 				startActivity(intent);
 			}
@@ -224,6 +237,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 		// Set click listener for the metronome sound button
 		soundToggle.setOnClickListener(new View.OnClickListener() {
+			//TODO: here is where we need to mute the sound when the metronome is integrated
 			@Override
 			public void onClick(View v) {
 				if (isLoud) {
@@ -277,10 +291,12 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				targetSPM.setText(newValue);
 				SPMSelector.setVisibility(View.GONE);
 			}
+
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 
 			}
+
 		});
 
 		currentDistance.setText(Double.toString(totalDistance));
@@ -339,7 +355,17 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	public void onLocationChanged(@NonNull Location location) {
 		updateMap(location);
 		updateDistance(location);
+
+		// Calculate and update the current pace
+		if (totalElapsedTime > 0 && totalPaceDistance > 0) {
+			double currentPaceTime = totalElapsedTime / (long) totalPaceDistance;
+			int paceMinutes = (int) (currentPaceTime / (60 * 1000));
+			int paceSeconds = (int) ((currentPaceTime / 1000) % 60);
+			String currentPaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+			currentPace.setText(currentPaceText);
+		}
 	}
+
 
 
 	//	fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
@@ -380,20 +406,30 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 					LatLng previousLatLng = points.get(points.size() - 1);
 					double distance = calculateDistance(previousLatLng, currentLatLng);
 					totalDistance += distance;
-					totalPaceDistance += distance; // Update total distance for average pace calculation
+					totalPaceDistance += distance;
 
 					// Calculate trailing mile pace
-					if (totalPaceDistance > 0) {
+					if (totalPaceDistance > 1.0) { // Check if the total distance is at least 1 mile
 						long currentTime = SystemClock.uptimeMillis();
 						long mileTime = currentTime - lastMileTime;
 						lastMileTime = currentTime;
 
-						// Update average pace
+						// Calculate Rolling Mile pace
+						double rollingMilePaceTime = mileTime / 1000.0; // Convert to seconds
+						double rollingMilePace = rollingMilePaceTime > 0 ? totalPaceDistance / rollingMilePaceTime : 0.0;
+
+						// Update UI with Rolling Mile pace
+						int paceMinutes = (int) (rollingMilePace / 60);
+						int paceSeconds = (int) (rollingMilePace % 60);
+						String rollingMilePaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+						avgPace.setText(rollingMilePaceText);
+
+						// Calculate Average Pace
 						long averagePaceTime = totalElapsedTime / (long) totalPaceDistance;
-						int paceMinutes = (int) (averagePaceTime / (60 * 1000));
-						int paceSeconds = (int) ((averagePaceTime / 1000) % 60);
-						String averagePace = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
-						avgPace.setText(averagePace);
+						paceMinutes = (int) (averagePaceTime / (60 * 1000));
+						paceSeconds = (int) ((averagePaceTime / 1000) % 60);
+						String averagePaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+						avgPace.setText(averagePaceText);
 					}
 				}
 				points.add(currentLatLng);
@@ -402,6 +438,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			}
 		}
 	}
+
 
 
 	private float calculateDistance(LatLng start, LatLng end) {
@@ -417,12 +454,15 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private void startTimer() {
 		if (startTime == 0) {
 			startTime = SystemClock.uptimeMillis();
-			currentPace.setText("0.00");
+			currentPace.setText("0:00");
 		} else {
 			startTime += (SystemClock.uptimeMillis() - timePaused);
 		}
+		totalPaceDistance = 0.0;
+		lastMileTime = 0;
 		handler.post(updateTimerRunnable);
 	}
+
 
 
 	// Timer thread to update the UI thread display
@@ -506,4 +546,16 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			metronome.on();
 			new Thread(playMetronomeThread).start();
 	}
+
+
+
+	private void updateRunsDB () {
+		// Replace "user_id" with the actual user ID you want to write data for
+		String userId = "PYa4qGj3EVXa29n5CpOtWoZlbDh2";
+		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Runs");
+		String key = reference.push().getKey();
+		reference.child("Users").child(key).child("calories").setValue("1200000");
+
+	}
+
 }

@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
 import android.location.Location;
+//import android.location.LocationRequest;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;

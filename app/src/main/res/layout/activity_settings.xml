@@ -197,6 +197,14 @@
                 android:layout_below="@id/textCadence"
                 android:text="Edit Profile" />
 
+            <FrameLayout
+                android:id="@+id/mediaPlayerFrag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editProfileBtn"
+                >
+            </FrameLayout>
+
 
         </RelativeLayout>
 

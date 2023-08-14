@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -44,7 +45,6 @@ public class Home extends AppCompatActivity {
 	BottomNavigationView bottomNavigationView;
 	TextView username;
 	FirebaseUser currentUser;
-	private PopupWindow tooltipPopup; // Declare the tooltipPopup variable here
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +68,13 @@ public class Home extends AppCompatActivity {
 		halfMarathonRun.setOnClickListener(v -> showTooltip(v, getString(R.string.half_marathon_badge_tooltip)));
 		fiftyMileRun.setOnClickListener(v -> showTooltip(v, getString(R.string.fifty_mile_badge_tooltip)));
 
-		profileImage.setOnClickListener(v-> new Intent(Home.this, ChangeProfilePicture.class));
+		profileImage.setOnClickListener(v -> {
+			Intent intent = new Intent(Home.this, ChangeProfilePicture.class);
+			startActivity(intent);
+		});
 
-		 currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+		currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
 		if (currentUser != null) {
 			// User is signed in
@@ -90,6 +94,7 @@ public class Home extends AppCompatActivity {
 			Intent intent = new Intent(Home.this, StartWorkout.class);
 			startActivity(intent);
 		});
+		fabButton.setOnClickListener(v -> startActivity(new Intent(Home.this, StartWorkout.class)));
 
 		// KEEP -- Used for bottom navigation bar on click
 		bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -269,5 +274,8 @@ public class Home extends AppCompatActivity {
 			}
 		});
 	}
+
+
+
 
 }

@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -108,6 +109,12 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	//----------------------------
 	private Sensor stepDetectorSensor;
 
+	//--------Metronome variables
+	private float threadBPM = 0;
+	private String newBPM = "";
+	private Metronome metronome = new Metronome();
+	private Metronome.MetronomeThread playMetronomeThread = new Metronome.MetronomeThread(100);
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -165,8 +172,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		handler = new Handler();
 		startTimer();
 
-
-
 		// Set click listener for the END button
 		end.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -179,6 +184,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				handler.removeCallbacks(updateTimerRunnable);
 				// Unregister the step detector listener
 				sensorManager.unregisterListener(ActiveWorkout.this, stepDetectorSensor);
+				metronome.stop();
+				handler.removeCallbacks(playMetronomeThread);
 				//stopTracking();
 				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
@@ -192,6 +199,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			public void onClick(View v) {
 				if (!isPaused) {
 					pauseTimer();
+					metronome.stop();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.resume));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gps_status_ready));
 					isPaused = true;
@@ -199,6 +207,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 					Toast.makeText(ActiveWorkout.this, "Workout Paused", Toast.LENGTH_SHORT).show();
 				} else if (isPaused) {
 					startTimer();
+					metronome.on();
+					new Thread(playMetronomeThread).start();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pause));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.pause));
 					isPaused = false;
@@ -208,16 +218,22 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			}
 		});
 
+		//--- METRONOME SECTION ----//
+
+		//new Thread(playMetronomeThread).start();
+
 		// Set click listener for the metronome sound button
 		soundToggle.setOnClickListener(new View.OnClickListener() {
-			//TODO: here is where we need to mute the sound when the metronome is integrated
 			@Override
 			public void onClick(View v) {
 				if (isLoud) {
 					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_off));
+					metronome.stop();
 					isLoud = false;
 				} else {
 					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_on));
+					metronome.on();
+					new Thread(playMetronomeThread).start();
 					isLoud = true;
 				}
 			}
@@ -244,6 +260,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 						method.invoke(SPMSelector);
 						SPMSelector.setVisibility(View.VISIBLE);
 						SPMSelector.performClick();
+						metronome.stop();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -251,21 +268,19 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			}
 		});
 
-
 		// Listener for the selection of the new metronome SPM frequency
 		SPMSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				String newValue = parent.getItemAtPosition(position).toString();
+				setBPM(newValue);
 				targetSPM.setText(newValue);
 				SPMSelector.setVisibility(View.GONE);
 			}
-
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 
 			}
-
 		});
 
 		currentDistance.setText(Double.toString(totalDistance));
@@ -434,6 +449,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	protected void onDestroy() {
 		super.onDestroy();
 		handler.removeCallbacks(updateTimerRunnable);
+		metronome.stop();
 	}
 
 
@@ -442,8 +458,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private void startGPSUpdates(){
 		fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack,null);
 	}
-
-
 
 
 	@Override
@@ -482,5 +496,14 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			sensorManager.unregisterListener(this, stepDetectorSensor);
 			// Store the pause start time
 		}
+	}
+
+	private void setBPM (String bpmString){
+			//Convert SPM string to a float.
+			threadBPM = Float.parseFloat(bpmString);
+			//Set the thread bpm.
+			playMetronomeThread.threadBpm = threadBPM;
+			metronome.on();
+			new Thread(playMetronomeThread).start();
 	}
 }

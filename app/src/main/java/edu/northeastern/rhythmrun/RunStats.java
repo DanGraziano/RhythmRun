@@ -33,10 +33,10 @@ public class RunStats extends AppCompatActivity {
 
         // Retrieve data from the intent's extras
         Intent intentData = getIntent();
-        String totalDistance = intentData.getStringExtra("distance");
-        String avgCadence = intentData.getStringExtra("avgCadence");
-        String avgPace = intentData.getStringExtra("avgPace");
-        String totalTime = intentData.getStringExtra("time");
+        String totalDistance = intentData.getStringExtra("distance") + " mi";
+        String avgCadence = intentData.getStringExtra("avgCadence") + " spm";
+        String avgPace = intentData.getStringExtra("avgPace") + " /mi";
+        String totalTime = intentData.getStringExtra("time") + " mins";
         String currentDate = intentData.getStringExtra("date");
 
         // Show data in text views

@@ -354,36 +354,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
 	}
-		// TODO TBD if this should be on a different thread
-//		Runnable updateCadenceRunnable = new Runnable() {
-//			@Override
-//			public void run() {
-//				// Calculate the cadence
-//				double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - pauseDuration);
-//				// Update UI with new cadence
-//				updateCadence(cadence);
-//				// Schedule the next update
-//				handler.postDelayed(this, 1000);
-//			}
-//		};
 
-
-
-//		stopButton.setOnClickListener(v -> {
-//			// Stop step detector listener on end button click
-//			sensorManager.unregisterListener(this, stepDetectorSensor);
-//			// Stop updating the cadence
-//			handler.removeCallbacks(updateCadenceRunnable);
-//			double averageCadence = calculateCadence(stepCount, startTime, System.currentTimeMillis());
-//			// TODO maybe store this in DB so we can show it on the post-workout screen
-//		});
-
-		// Pause/resume step dectector listener on pause button press
-//		Button pauseButton = findViewById(R.id.pause);
-//		pauseButton.setOnClickListener(v -> {
-//			togglePause();
-//		});
-//	}
 
 	private void updateDistance(Location location) {
 		if (location != null) {

@@ -12,11 +12,12 @@ import android.media.AudioTrack;
 public class MetronomeTest extends AppCompatActivity {
 
     Button startBtn, stopBtn;
+    float bpm = 0;
 
     Boolean metronomeOn = false;
 
     public Metronome metronome = new Metronome();
-    public Metronome.MetronomeThread playMetronomeThread = new Metronome.MetronomeThread((20));
+    public Metronome.MetronomeThread playMetronomeThread = new Metronome.MetronomeThread(80);
 
 
     @Override
@@ -27,15 +28,17 @@ public class MetronomeTest extends AppCompatActivity {
         startBtn = findViewById(R.id.metronomeBtn);
         stopBtn = findViewById(R.id.stopBtn);
 
-        startBtn.setOnClickListener(v -> playMetronome(60));
+        bpm = 180;
+
+        startBtn.setOnClickListener(v -> playMetronome(bpm));
         stopBtn.setOnClickListener(v -> stopMetronome());
 
     }
 
-    private void playMetronome(int bpm){
+    private void playMetronome(float bpm){
         //If the metronome has been paused before, create a new audio stream and
         //set the metronome on.
-        if(!metronomeOn){
+        if(metronomeOn == false){
             metronome.on();
             metronomeOn = true;
         }

@@ -55,7 +55,7 @@
             <LinearLayout
                 android:id="@+id/boxDistance"
                 android:layout_width="154dp"
-                android:layout_height="126dp"
+                android:layout_height="90dp"
                 android:background="#FFFFFF"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -69,18 +69,18 @@
                     android:id="@+id/distanceLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:padding="8dp"
                     android:text="Distance"
                     android:textColor="#000"
-                    android:textSize="18sp"
-                    android:gravity="center"/>
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/distanceData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:gravity="center"
+                    android:padding="8dp"
                     android:textColor="#000"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -88,7 +88,7 @@
             <LinearLayout
                 android:id="@+id/boxCadence"
                 android:layout_width="154dp"
-                android:layout_height="126dp"
+                android:layout_height="90dp"
                 android:background="#FFFFFF"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -102,18 +102,18 @@
                     android:id="@+id/cadenceLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:padding="8dp"
                     android:text="Cadence"
                     android:textColor="#000"
-                    android:textSize="18sp"
-                    android:gravity="center"/>
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/cadenceData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:gravity="center"
+                    android:padding="8dp"
                     android:textColor="#000"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -121,7 +121,7 @@
             <LinearLayout
                 android:id="@+id/boxTotalTime"
                 android:layout_width="154dp"
-                android:layout_height="126dp"
+                android:layout_height="90dp"
                 android:background="#FFFFFF"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -154,7 +154,7 @@
             <LinearLayout
                 android:id="@+id/boxAvgPace"
                 android:layout_width="154dp"
-                android:layout_height="126dp"
+                android:layout_height="90dp"
                 android:background="#FFFFFF"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -200,6 +200,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="date"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#000"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toTopOf="@+id/mapImageView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -207,7 +211,7 @@
 
             <View
                 android:id="@+id/divider2"
-                android:layout_width="335dp"
+                android:layout_width="325dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -215,18 +219,18 @@
                 app:layout_constraintHorizontal_bias="0.517"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.672" />
+                app:layout_constraintVertical_bias="0.661" />
 
             <View
                 android:id="@+id/divider3"
                 android:layout_width="1dp"
-                android:layout_height="280dp"
+                android:layout_height="210dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.766" />
+                app:layout_constraintVertical_bias="0.72" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

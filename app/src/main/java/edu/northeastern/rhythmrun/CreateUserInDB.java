@@ -2,6 +2,7 @@ package edu.northeastern.rhythmrun;
 
 public class CreateUserInDB {
 
+    //TODO make private and use getters and setters
 
     public String firstname;
 

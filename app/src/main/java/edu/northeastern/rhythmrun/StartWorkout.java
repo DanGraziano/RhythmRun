@@ -49,7 +49,7 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 	//Stores list of coordinates
 	float[] listCoordinates = new float[20];
 	//Google Map API related variables
-	private GoogleMap gMap;
+	private static GoogleMap gMap;
 
 	private Button startBtn;
 
@@ -245,5 +245,6 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 		gMap.addMarker(new MarkerOptions().position(coordinates).title("Start"));
 		gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates,18));
 	}
+
 }
 

@@ -184,6 +184,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				handler.removeCallbacks(updateTimerRunnable);
 				// Unregister the step detector listener
 				sensorManager.unregisterListener(ActiveWorkout.this, stepDetectorSensor);
+				metronome.stop();
+				handler.removeCallbacks(playMetronomeThread);
 				//stopTracking();
 				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
@@ -197,6 +199,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			public void onClick(View v) {
 				if (!isPaused) {
 					pauseTimer();
+					metronome.stop();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.resume));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gps_status_ready));
 					isPaused = true;
@@ -204,6 +207,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 					Toast.makeText(ActiveWorkout.this, "Workout Paused", Toast.LENGTH_SHORT).show();
 				} else if (isPaused) {
 					startTimer();
+					metronome.on();
+					new Thread(playMetronomeThread).start();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pause));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.pause));
 					isPaused = false;
@@ -215,7 +220,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 		//--- METRONOME SECTION ----//
 
-		new Thread(playMetronomeThread).start();
+		//new Thread(playMetronomeThread).start();
 
 		// Set click listener for the metronome sound button
 		soundToggle.setOnClickListener(new View.OnClickListener() {
@@ -255,6 +260,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 						method.invoke(SPMSelector);
 						SPMSelector.setVisibility(View.VISIBLE);
 						SPMSelector.performClick();
+						metronome.stop();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -271,7 +277,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				targetSPM.setText(newValue);
 				SPMSelector.setVisibility(View.GONE);
 			}
-
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 
@@ -473,6 +478,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	protected void onDestroy() {
 		super.onDestroy();
 		handler.removeCallbacks(updateTimerRunnable);
+		metronome.stop();
 	}
 
 
@@ -481,8 +487,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private void startGPSUpdates(){
 		fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack,null);
 	}
-
-
 
 
 	@Override
@@ -528,5 +532,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			threadBPM = Float.parseFloat(bpmString);
 			//Set the thread bpm.
 			playMetronomeThread.threadBpm = threadBPM;
+			metronome.on();
+			new Thread(playMetronomeThread).start();
 	}
 }

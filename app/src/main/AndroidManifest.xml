@@ -31,6 +31,10 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".RunStats"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".ChangeProfilePicture"
             android:exported="false"
             android:screenOrientation="portrait"/>
@@ -38,10 +42,10 @@
             android:name=".Home"
             android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".PostWorkout"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
+<!--        <activity-->
+<!--            android:name=".PostWorkout"-->
+<!--            android:exported="false"-->
+<!--            android:screenOrientation="portrait"/>-->
         <activity
             android:name=".ActiveWorkout"
             android:exported="false"

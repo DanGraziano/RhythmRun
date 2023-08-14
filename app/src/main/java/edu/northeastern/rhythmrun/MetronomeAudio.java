@@ -14,7 +14,7 @@ public class MetronomeAudio {
         this.sampleRate = sampleRate;
     }
 
-    //Similar to C++ Oscillator sineWave generator
+    //Similar to C++ Oscillator sineWave generator from
     public static double[] createTone(int samples, int sampleRate, double frequencyOfTone){
         double[] sample = new double[samples];
         for ( int i = 0; i < samples; i ++) {
@@ -23,7 +23,9 @@ public class MetronomeAudio {
         return sample;
     }
 
-    //Generates a 16PCM sound array.
+    //Converts the sample into a 16bit PCM using bit masking.
+    //Code block is needed to comply with the encoding needed for the audioTrack API.
+    //Code block is from https://masterex.github.io/archive/2012/05/28/android-audio-synthesis.html
     public static byte[] generateSound(double[] samples) {
         //Creates double the buffer of the size of the audio sample
         byte[] sound = new byte[2 * samples.length];

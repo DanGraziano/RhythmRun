@@ -16,7 +16,7 @@ public class MetronomeTest extends AppCompatActivity {
     Boolean metronomeOn = false;
 
     public Metronome metronome = new Metronome();
-    public Metronome.MetronomeThread playMetronomeThread = new Metronome.MetronomeThread((60));
+    public Metronome.MetronomeThread playMetronomeThread = new Metronome.MetronomeThread((20));
 
 
     @Override

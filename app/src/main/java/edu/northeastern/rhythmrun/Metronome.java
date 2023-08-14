@@ -8,16 +8,24 @@ public class Metronome {
 
     private static boolean metronomeOn = true;
 
+    //Creates the initial audio Track
     public Metronome(){
         MetronomeAudio.createAudioTrack();
         
     }
+
+    //Equation that sets the beats perminute.
+    //44100 is the sample rate equivelant to 1 second of sound
+    //Silence is the equiveleant amount of samples left to create silence.
     public static void setBpm(int bpm){
         //Equation that sets the beats per minute.
-        silence = ((60/bpm) *  44100);
+        silence = (int) (((60/bpm)*8000)-tick);
     }
 
     //Plays the metronome
+    //Adaptation of https://masterex.github.io/archive/2012/05/28/android-audio-synthesis.html
+    //The idea here is to store sound for the sample size of the tick. Once that is filled the rest
+    //of the soundBuffer is filled with silence.
     public static void play(int bpm) {
         //Sets the bpm
         setBpm(bpm);
@@ -29,8 +37,8 @@ public class Metronome {
 
         //Generate the sound to be stored.
         double[] tick =  MetronomeAudio.createTone(Metronome.tick, 8000, 440);
-        //create sound
-        double[] soundBuffer = new double[8000];
+        //create sound  buffer
+        double[] soundBuffer = new double[192000];
 
         //Play metronome ticks size of soundBuffer until metronome is turned off.
         while(metronomeOn) {

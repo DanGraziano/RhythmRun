@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder> implements View.OnClickListener {
+public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
 
     private ArrayList<RunModel> runsList;
     private Context context;
@@ -47,34 +47,18 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder> i
         holder.miPerMin.setText(run.getAvgPace());
 
         // Set click listener on the item view
-        holder.itemView.setOnClickListener(this);
+        holder.itemView.setOnClickListener(view -> {
+            String runId = run.getRunId();
+
+            Intent intent = new Intent(context, PostWorkout.class);
+            intent.putExtra("runId", runId);
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
         return runsList.size();
-    }
-
-    @Override
-    public void onClick(View view) {
-        // Get the position of the clicked item
-        int position = recyclerView.getChildLayoutPosition(view);
-
-        // Get the corresponding RunModel
-        RunModel run = runsList.get(position);
-
-        // TODO Replace intent with correct post-workout stats class instead of Settings
-        Intent intent = new Intent(context, Settings.class);
-        /* Can use if we don't want to pull from DB
-
-        intent.putExtra("date", run.getDate());
-        intent.putExtra("distance", run.getDistance());
-        intent.putExtra("avgCadence", run.getAvgCadence());
-        intent.putExtra("avgPace", run.getAvgPace());
-        intent.putExtra("time", run.getTime());
-*/
-        // Start the RunDetailActivity or RunDetailFragment
-        context.startActivity(intent);
     }
 
     static class RunViewHolder extends RecyclerView.ViewHolder {

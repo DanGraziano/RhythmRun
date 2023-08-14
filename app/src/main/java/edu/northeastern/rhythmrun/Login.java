@@ -180,4 +180,3 @@ public class Login extends AppCompatActivity {
 
 }
 
-// TODO figure our how to make password visible or hidden

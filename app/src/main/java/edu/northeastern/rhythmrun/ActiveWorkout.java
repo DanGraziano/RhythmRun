@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -118,6 +119,12 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	//----------------------------
 	private Sensor stepDetectorSensor;
 
+	//--------Metronome variables
+	private float threadBPM = 0;
+	private String newBPM = "";
+	private Metronome metronome = new Metronome();
+	private Metronome.MetronomeThread playMetronomeThread = new Metronome.MetronomeThread(100);
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -189,6 +196,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				handler.removeCallbacks(updateTimerRunnable);
 				// Unregister the step detector listener
 				sensorManager.unregisterListener(ActiveWorkout.this, stepDetectorSensor);
+				metronome.stop();
+				handler.removeCallbacks(playMetronomeThread);
 				//stopTracking();
 //				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
 				updateRunsDB();
@@ -203,6 +212,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			public void onClick(View v) {
 				if (!isPaused) {
 					pauseTimer();
+					metronome.stop();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.resume));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gps_status_ready));
 					isPaused = true;
@@ -210,6 +220,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 					Toast.makeText(ActiveWorkout.this, "Workout Paused", Toast.LENGTH_SHORT).show();
 				} else if (isPaused) {
 					startTimer();
+					metronome.on();
+					new Thread(playMetronomeThread).start();
 					pause.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pause));
 					pause.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.pause));
 					isPaused = false;
@@ -219,6 +231,10 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			}
 		});
 
+		//--- METRONOME SECTION ----//
+
+		//new Thread(playMetronomeThread).start();
+
 		// Set click listener for the metronome sound button
 		soundToggle.setOnClickListener(new View.OnClickListener() {
 			//TODO: here is where we need to mute the sound when the metronome is integrated
@@ -226,9 +242,12 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			public void onClick(View v) {
 				if (isLoud) {
 					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_off));
+					metronome.stop();
 					isLoud = false;
 				} else {
 					soundToggle.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.sound_on));
+					metronome.on();
+					new Thread(playMetronomeThread).start();
 					isLoud = true;
 				}
 			}
@@ -255,6 +274,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 						method.invoke(SPMSelector);
 						SPMSelector.setVisibility(View.VISIBLE);
 						SPMSelector.performClick();
+						metronome.stop();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -262,12 +282,12 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			}
 		});
 
-
 		// Listener for the selection of the new metronome SPM frequency
 		SPMSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				String newValue = parent.getItemAtPosition(position).toString();
+				setBPM(newValue);
 				targetSPM.setText(newValue);
 				SPMSelector.setVisibility(View.GONE);
 			}
@@ -375,7 +395,36 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
 	}
+		// TODO TBD if this should be on a different thread
+//		Runnable updateCadenceRunnable = new Runnable() {
+//			@Override
+//			public void run() {
+//				// Calculate the cadence
+//				double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - pauseDuration);
+//				// Update UI with new cadence
+//				updateCadence(cadence);
+//				// Schedule the next update
+//				handler.postDelayed(this, 1000);
+//			}
+//		};
 
+
+
+//		stopButton.setOnClickListener(v -> {
+//			// Stop step detector listener on end button click
+//			sensorManager.unregisterListener(this, stepDetectorSensor);
+//			// Stop updating the cadence
+//			handler.removeCallbacks(updateCadenceRunnable);
+//			double averageCadence = calculateCadence(stepCount, startTime, System.currentTimeMillis());
+//			// TODO maybe store this in DB so we can show it on the post-workout screen
+//		});
+
+		// Pause/resume step dectector listener on pause button press
+//		Button pauseButton = findViewById(R.id.pause);
+//		pauseButton.setOnClickListener(v -> {
+//			togglePause();
+//		});
+//	}
 
 	private void updateDistance(Location location) {
 		if (location != null) {
@@ -469,6 +518,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	protected void onDestroy() {
 		super.onDestroy();
 		handler.removeCallbacks(updateTimerRunnable);
+		metronome.stop();
 	}
 
 
@@ -477,8 +527,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private void startGPSUpdates(){
 		fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack,null);
 	}
-
-
 
 
 	@Override
@@ -517,6 +565,15 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			sensorManager.unregisterListener(this, stepDetectorSensor);
 			// Store the pause start time
 		}
+	}
+
+	private void setBPM (String bpmString){
+			//Convert SPM string to a float.
+			threadBPM = Float.parseFloat(bpmString);
+			//Set the thread bpm.
+			playMetronomeThread.threadBpm = threadBPM;
+			metronome.on();
+			new Thread(playMetronomeThread).start();
 	}
 
 

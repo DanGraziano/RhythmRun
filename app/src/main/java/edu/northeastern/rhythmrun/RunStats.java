@@ -49,7 +49,7 @@ public class RunStats extends AppCompatActivity {
         // Initialize Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference runsRef = database.getReference("Runs");
-        String runKey = "B8rYp2ZjN6sDxTq9GvHcLm4JkE7w"; // Replace with the actual run key
+        String runKey = getIntent().getExtras().getString("key"); // Replace with the actual run key
 
         // Create a query to retrieve the specific run data
         Query runQuery = runsRef.child(runKey);
@@ -68,11 +68,9 @@ public class RunStats extends AppCompatActivity {
                     String pace = dataSnapshot.child("pace").getValue(String.class);
                     String time = dataSnapshot.child("time").getValue(String.class);
 
-                    Log.d("fuckingWork", date);
-
 
                     // Set the retrieved values to the TextViews
-                    run = new RunModel(calories, date, distance, pace, time);
+                    run = new RunModel(date, distance, pace, pace, time);
                 } else {
                     Log.d("RunStats", "No run data found for the specified key.");
                 }

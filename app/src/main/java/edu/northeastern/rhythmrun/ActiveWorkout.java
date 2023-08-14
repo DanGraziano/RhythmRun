@@ -97,6 +97,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private long timePaused = 0;
 
 	private Boolean isFirstPull = true;
+	private String dbKey;
 
 
 	//------------------------------------------------
@@ -202,6 +203,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 //				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
 				updateRunsDB();
 				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
+				intent.putExtra("key","Tf4GnL1sXc2RzU5pYbEhjQvWqKm9a");
 				startActivity(intent);
 			}
 		});
@@ -553,8 +555,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		// Replace "user_id" with the actual user ID you want to write data for
 		String userId = "PYa4qGj3EVXa29n5CpOtWoZlbDh2";
 		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Runs");
-		String key = reference.push().getKey();
-		reference.child("Users").child(key).child("calories").setValue("1200000");
+		String dbKey = reference.push().getKey();
+		reference.child("Users").child(dbKey).child("calories").setValue("1200000");
 
 	}
 

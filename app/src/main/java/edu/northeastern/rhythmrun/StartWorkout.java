@@ -155,6 +155,7 @@ public class StartWorkout extends AppCompatActivity implements OnMapReadyCallbac
 	public void onMapReady(@NonNull GoogleMap googleMap) {
 		gMap = googleMap;
 		LatLng currentCoord = new LatLng(currentLat,currentLong);
+		googleMap.getUiSettings().setZoomControlsEnabled(true);
 		Log.d("onMapReady",String.valueOf(currentCoord));
 		gMap.moveCamera(CameraUpdateFactory.newLatLng(currentCoord));
 	}

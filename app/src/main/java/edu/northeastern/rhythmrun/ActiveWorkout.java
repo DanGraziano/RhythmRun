@@ -127,6 +127,10 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		SPMSelector = findViewById(R.id.spinner);
 		spmGear = findViewById(R.id.spmGear);
 
+		// Initialize sensor manager and accelerometer sensor
+		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
 		stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
 		sensorManager.registerListener(this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
@@ -161,9 +165,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		handler = new Handler();
 		startTimer();
 
-		// Initialize sensor manager and accelerometer sensor
-		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 
 		// Set click listener for the END button
@@ -277,7 +278,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	public void onMapReady(GoogleMap googleMap) {
 		this.googleMap = googleMap;
 		googleMap.getUiSettings().setZoomControlsEnabled(true);
-
 		// Start location updates
 		startLocationUpdates();
 	}

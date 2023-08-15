@@ -409,9 +409,9 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			listOfPoints.add(location);
 		} else {
 			Location prevLocation = listOfPoints.get(listOfPoints.size() - 1);
-			totalDistance += prevLocation.distanceTo(location);
-			currentDistance.setText(String.valueOf(totalDistance));
-			Log.d("idkfam", String.valueOf(totalDistance));
+			totalDistance += (prevLocation.distanceTo(location)) * 0.000621371192;
+			Double rounded = Math.round(totalDistance * 100.0) / 100.0;
+			currentDistance.setText(String.valueOf(rounded));
 			listOfPoints.add(location);
 
 		}

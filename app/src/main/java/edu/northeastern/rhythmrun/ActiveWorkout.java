@@ -150,6 +150,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		SPMSelector = findViewById(R.id.spinner);
 		spmGear = findViewById(R.id.spmGear);
 
+
 		// Initialize sensor manager and accelerometer sensor
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -374,10 +375,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	}
 
 
-
-	//	fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
-
-
 	private void startLocationUpdates() {
 
 		if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -413,9 +410,27 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			Double rounded = Math.round(totalDistance * 100.0) / 100.0;
 			currentDistance.setText(String.valueOf(rounded));
 			listOfPoints.add(location);
+			currentPace.setText(calculateLastMilePace(startTime, rounded));
 
 		}
 	}
+
+	private String calculateLastMilePace(long elapsedTime, double totalDistance) {
+		// Ensure that both elapsed time and total distance are greater than 0
+
+		// Calculate pace time per mile in milliseconds
+		double paceTimeInMillis = elapsedTime / totalDistance;
+
+		// Convert pace time to minutes and seconds
+		int paceMinutes = (int) (paceTimeInMillis / (60 * 1000));
+		Double roundedMinutes = Math.round(paceMinutes * 100.0) / 100.0;
+		int paceSeconds = (int) ((paceTimeInMillis / 1000) % 60);
+		Double roundedSeconds = Math.round(paceSeconds * 100.0) / 100.0;
+		// Format the pace time as "MM:SS"
+		return String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+
+	}
+
 
 	// Start timer from system clock
 	private void startTimer() {
@@ -446,9 +461,6 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			// Update total elapsed time
 			totalElapsedTime = timeInMilliseconds;
 
-			String timerText = String.format("%02d:%02d:%03d", minutes, seconds, milliseconds);
-			currentTime.setText(timerText);
-			handler.postDelayed(this, 10); // Update every 10 milliseconds
 		}
 	};
 
@@ -489,10 +501,10 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	Runnable updateCadenceRunnable = new Runnable() {
 		@Override
 		public void run() {
-//			 Calculate the cadence
-			 double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - timePaused);
-			 updateCadence(cadence);
-			 handler.postDelayed(this, 1000);}
+//			Calculate the cadence
+		 	double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - timePaused);
+			currentCadence.setText(String.valueOf(cadence));
+			handler.postDelayed(this, 1000);}
 	};
 
 

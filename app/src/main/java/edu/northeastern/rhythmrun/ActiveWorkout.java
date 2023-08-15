@@ -293,6 +293,14 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		timerThread = new HandlerThread("TimerThread");
 		timerThread.start();
 		timerHandler = new Handler(timerThread.getLooper());
+
+
+		// Media player
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.mediaPlayerFrag, new MediaPlayerFragment())
+					.commit();
+		}
 	}
 
 	//----- END OF ON CREATE-----
@@ -391,7 +399,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		sensorManager.unregisterListener(this, stepDetectorSensor);
 		timePaused = SystemClock.uptimeMillis();
 		// Stop the Runnable from updating the elapsed time
-		handler.removeCallbacks(updateTimeTask);
+		timerHandler.removeCallbacks(updateTimeTask);
 	}
 
 	private void resumeTimer() {
@@ -399,7 +407,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		// Adjust the start tracking time for the elapsed time during the pause
 		startTrackingTime += elapsedTime;
 		// Continue the timer task to update the UI
-		handler.postDelayed(updateTimeTask, 1000);
+		timerHandler.postDelayed(updateTimeTask, 1000);
 		// Register the step detector listener to resume counting steps
 		sensorManager.registerListener(this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
 	}
@@ -446,8 +454,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				Log.d("StepDetection", "Cadence Number: " + cadence);
 
 				// Make sure that the timer task is running
-				handler.removeCallbacks(updateTimeTask);
-				handler.postDelayed(updateTimeTask, 1000);
+				timerHandler.removeCallbacks(updateTimeTask);
+				timerHandler.postDelayed(updateTimeTask, 1000);
 			}
 		});
 	}

@@ -270,8 +270,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				String newValue = parent.getItemAtPosition(position).toString();
-				setBPM(newValue);
 				targetSPM.setText(newValue);
+				setBPM(newValue);
 				SPMSelector.setVisibility(View.GONE);
 			}
 			@Override
@@ -545,14 +545,17 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 				// Run on main thread
 				runOnUiThread(() -> {
 					// Only update textview if pace is faster than 25 minutes
-					if (pace <= 25) {
+					if (pace <= 25 && pace >= 0) {
 						int paceMinutes = (int) pace;
 						int paceSeconds = Math.round((pace - paceMinutes) * 60);
 						avgPaceNumber.setText(String.format(Locale.getDefault(), "%d:%02d /mi", paceMinutes, paceSeconds));
 					}
 
+
 					// Update distance and convert to miles
-					currentDistance.setText(String.format(Locale.getDefault(), "%.2f", totalDistance / 1609.34));
+					if (totalDistance >= 0) {
+						currentDistance.setText(String.format(Locale.getDefault(), "%.2f", totalDistance / 1609.34));
+					}
 
 					// Update the polyline
 					LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -594,6 +597,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		playMetronomeThread.threadBpm = threadBPM;
 		metronome.on();
 		new Thread(playMetronomeThread).start();
+		metronomeOn = true;
+
 	}
 
 	private void metronomeOff(){

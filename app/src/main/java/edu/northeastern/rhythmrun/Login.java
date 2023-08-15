@@ -88,7 +88,7 @@ public class Login extends AppCompatActivity {
         signInBtn.setOnClickListener(v -> checkUserInputs());
 
         // forgot pw
-        forgotPwBtn.setOnClickListener(v -> startActivity(new Intent(Login.this, ForgotPassword.class)));
+        forgotPwBtn.setOnClickListener(v -> startActivity(new Intent(Login.this, MetronomeTest.class)));
 
         // Open sign up page from button click
         Button signUpBtn = findViewById(R.id.signUpBtn);

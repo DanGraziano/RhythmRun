@@ -176,7 +176,9 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		// Set click listener for the END button
 		endButton.setOnClickListener(v -> {
 
-			// Turn mettronome off
+			MediaPlayerFragment.mediaPlayer.stop();
+
+			// Turn metronome off
 			if (metronomeOn) {
 				metronomeOff();
 			}

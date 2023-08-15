@@ -19,6 +19,7 @@ public class RunStats extends AppCompatActivity {
     private TextView currentPaceNumberTextView;
     private TextView avgPaceNumberTextView;
     private TextView finalTimeTextView;
+    private String runKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,7 @@ public class RunStats extends AppCompatActivity {
         currentPaceNumberTextView = findViewById(R.id.currentPaceNumber);
         avgPaceNumberTextView = findViewById(R.id.avgPaceNumber);
         finalTimeTextView = findViewById(R.id.finalTime);
+        runKey = getIntent().getExtras().getString("key");
 
         readDb(new DataReceivedListener() {
             @Override
@@ -49,7 +51,6 @@ public class RunStats extends AppCompatActivity {
         // Initialize Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference runsRef = database.getReference("Runs");
-        String runKey = getIntent().getExtras().getString("key"); // Replace with the actual run key
 
         // Create a query to retrieve the specific run data
         Query runQuery = runsRef.child(runKey);
@@ -61,16 +62,15 @@ public class RunStats extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     // Parse and process the run data
                     // Parse and process the run data
-                    String cadenceTime = dataSnapshot.child("cadenceTime").getValue(String.class);
-                    String calories = dataSnapshot.child("calories").getValue(String.class);
+                    String cadenceTime = dataSnapshot.child("avgCadence").getValue(String.class);
                     String date = dataSnapshot.child("date").getValue(String.class);
                     String distance = dataSnapshot.child("distance").getValue(String.class);
-                    String pace = dataSnapshot.child("pace").getValue(String.class);
+                    String pace = dataSnapshot.child("avgPace").getValue(String.class);
                     String time = dataSnapshot.child("time").getValue(String.class);
 
 
                     // Set the retrieved values to the TextViews
-                    run = new RunModel(date, distance, pace, pace, time);
+                    run = new RunModel(date, distance, cadenceTime, pace, time);
                 } else {
                     Log.d("RunStats", "No run data found for the specified key.");
                 }

@@ -36,6 +36,8 @@ import android.widget.TextView;
 
 import java.security.Key;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -100,6 +102,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 	private Boolean isFirstPull = true;
 	private String dbKey;
+	private List<Location> listOfPoints = new ArrayList<>();
 
 
 	//------------------------------------------------
@@ -174,7 +177,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 		// Initialize the location request
 		locationRequest = LocationRequest.create()
-				.setInterval(5000) // Update interval in milliseconds
+				.setInterval(1000) // Update interval in milliseconds
 				.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 		// Initialize the location manager
@@ -205,7 +208,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 //				Toast.makeText(ActiveWorkout.this, "Workout Ended", Toast.LENGTH_SHORT).show();
 				updateRunsDB();
 				Intent intent = new Intent(ActiveWorkout.this, RunStats.class);
-				intent.putExtra("key","Tf4GnL1sXc2RzU5pYbEhjQvWqKm9a");
+				intent.putExtra("key",dbKey);
 				startActivity(intent);
 			}
 		});
@@ -400,59 +403,19 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 	}
 
-
 	private void updateDistance(Location location) {
-		if (location != null) {
-			if (routePolyline != null) {
-				List<LatLng> points = routePolyline.getPoints();
-				LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-				if (!points.isEmpty()) {
-					LatLng previousLatLng = points.get(points.size() - 1);
-					double distance = calculateDistance(previousLatLng, currentLatLng);
-					totalDistance += distance;
-					totalPaceDistance += distance;
 
-					// Calculate trailing mile pace
-					if (totalPaceDistance > 1.0) { // Check if the total distance is at least 1 mile
-						long currentTime = SystemClock.uptimeMillis();
-						long mileTime = currentTime - lastMileTime;
-						lastMileTime = currentTime;
+		if (listOfPoints.isEmpty()){
+			listOfPoints.add(location);
+		} else {
+			Location prevLocation = listOfPoints.get(listOfPoints.size() - 1);
+			totalDistance += prevLocation.distanceTo(location);
+			currentDistance.setText(String.valueOf(totalDistance));
+			Log.d("idkfam", String.valueOf(totalDistance));
+			listOfPoints.add(location);
 
-						// Calculate Rolling Mile pace
-						double rollingMilePaceTime = mileTime / 1000.0; // Convert to seconds
-						double rollingMilePace = rollingMilePaceTime > 0 ? totalPaceDistance / rollingMilePaceTime : 0.0;
-
-						// Update UI with Rolling Mile pace
-						int paceMinutes = (int) (rollingMilePace / 60);
-						int paceSeconds = (int) (rollingMilePace % 60);
-						String rollingMilePaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
-						avgPace.setText(rollingMilePaceText);
-
-						// Calculate Average Pace
-						long averagePaceTime = totalElapsedTime / (long) totalPaceDistance;
-						paceMinutes = (int) (averagePaceTime / (60 * 1000));
-						paceSeconds = (int) ((averagePaceTime / 1000) % 60);
-						String averagePaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
-						avgPace.setText(averagePaceText);
-					}
-				}
-				points.add(currentLatLng);
-				routePolyline.setPoints(points);
-				currentDistance.setText(String.format(Locale.getDefault(), "%.2f", totalDistance));
-			}
 		}
 	}
-
-
-
-	private float calculateDistance(LatLng start, LatLng end) {
-		float[] results = new float[1];
-		Location.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude, results);
-		return results[0];
-	}
-
-
-
 
 	// Start timer from system clock
 	private void startTimer() {
@@ -465,6 +428,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		totalPaceDistance = 0.0;
 		lastMileTime = 0;
 		handler.post(updateTimerRunnable);
+		handler.post(updateCadenceRunnable);
 	}
 
 
@@ -522,9 +486,19 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		return stepCount / elapsedTimeInMinutes;
 	}
 
+	Runnable updateCadenceRunnable = new Runnable() {
+		@Override
+		public void run() {
+//			 Calculate the cadence
+			 double cadence = calculateCadence(stepCount, startTime, System.currentTimeMillis() - timePaused);
+			 updateCadence(cadence);
+			 handler.postDelayed(this, 1000);}
+	};
+
+
 	private void updateCadence(double cadence) {
 		// Update UI with new cadence using full numbers only
-		String cadenceText = String.format(Locale.US, "%.0f steps per minute", cadence);
+		String cadenceText = String.format(Locale.US, "%.0f SPM", cadence);
 		currentCadence.setText(cadenceText);
 	}
 
@@ -557,11 +531,11 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 	private void updateRunsDB() {
 		// Replace "user_id" with the actual user ID you want to write data for
 		String userId = "PYa4qGj3EVXa29n5CpOtWoZlbDh2";
-		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Runs");
-		String dbKey = reference.push().getKey();
+		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Runs");
+		dbKey = reference.push().getKey();
 		String averagePaceText;
 		// Calculate average pace
-		if (totalElapsedTime == 0 || totalDistance == 0){
+		if (totalElapsedTime < 0.3 || totalDistance < 0.3){
 			Float averagePaceTime = 0.0F;
 			int paceMinutes = 0;
 			int paceSeconds = (int) ((averagePaceTime / 1000) % 60);
@@ -580,14 +554,13 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		// Calculate cadence
 		double cadence = calculateCadence(stepCount, startTime, SystemClock.uptimeMillis());
 
-		// Calculate date
-		String currentDate = DateFormat.getDateTimeInstance().format(new Date());
-
-		reference.child(dbKey).child("cadenceTime").setValue(Double.toString(cadence));
-		reference.child(dbKey).child("calories").setValue("1200000"); // Update this value if needed
+		// Format the current date in DD/MM/YYYY format
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd", Locale.getDefault());
+		String currentDate = dateFormat.format(new Date());
+		reference.child(dbKey).child("avgCadence").setValue(Double.toString(cadence));
 		reference.child(dbKey).child("date").setValue(currentDate); // Set the current date
 		reference.child(dbKey).child("distance").setValue(String.format(Locale.getDefault(), "%.2f", totalDistance));
-		reference.child(dbKey).child("pace").setValue(averagePaceText);
+		reference.child(dbKey).child("avgPace").setValue(averagePaceText);
 		reference.child(dbKey).child("time").setValue(currentTime.getText().toString());
 
 	}

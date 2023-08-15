@@ -64,15 +64,6 @@ public class Settings extends AppCompatActivity {
 			displayUsersData(currentUser);
 		}
 
-		// TODO need to delete this and add to who ever is creating the activity workout page
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.replace(R.id.mediaPlayerFrag, new MediaPlayerFragment())
-					.commit();
-		}
-
-
-
 		logout.setOnClickListener(v -> {
 			FirebaseAuth.getInstance().signOut();
 			startActivity(new Intent(Settings.this, Login.class));

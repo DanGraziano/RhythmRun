@@ -19,7 +19,7 @@ public class MediaPlayerFragment extends Fragment implements Runnable {
 
     private ImageButton btnPlayPause, btnPrev, btnNext;
     ArrayList<AudioModel> songsList = new ArrayList<>();
-    MediaPlayer mediaPlayer = new MediaPlayer();
+    static MediaPlayer mediaPlayer = new MediaPlayer();
 
     private Handler handler = new Handler();
 

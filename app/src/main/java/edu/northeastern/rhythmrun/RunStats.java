@@ -33,17 +33,17 @@ public class RunStats extends AppCompatActivity {
 
         // Retrieve data from the intent's extras
         Intent intentData = getIntent();
-        String totalDistance = intentData.getStringExtra("distance") + " mi";
-        String avgCadence = intentData.getStringExtra("avgCadence") + " spm";
-        String avgPace = intentData.getStringExtra("avgPace") + " /mi";
-        String totalTime = intentData.getStringExtra("time") + " mins";
+        String totalDistance = intentData.getStringExtra("distance");
+        String avgCadence = intentData.getStringExtra("avgCadence");
+        String avgPace = intentData.getStringExtra("avgPace");
+        String totalTime = intentData.getStringExtra("time");
         String currentDate = intentData.getStringExtra("date");
 
         // Show data in text views
-        distanceData.setText(totalDistance);
-        cadenceData.setText(avgCadence);
-        timeData.setText(totalTime);
-        paceData.setText(avgPace);
+        distanceData.setText(totalDistance  + " mi");
+        cadenceData.setText(avgCadence + " spm");
+        timeData.setText(totalTime  + " mins");
+        paceData.setText(avgPace  + " /mi");
         dateData.setText(currentDate);
 
         // On save button press, save run data to database
@@ -80,6 +80,8 @@ public class RunStats extends AppCompatActivity {
                         // Error occurred while adding data to the database
                         Toast.makeText(RunStats.this, "Failed to save run data", Toast.LENGTH_SHORT).show();
                     });
+            Intent intent = new Intent(RunStats.this, Home.class);
+            startActivity(intent);
         });
 
         discardButton.setOnClickListener(v -> {
@@ -101,5 +103,11 @@ public class RunStats extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         });
+
+    }
+
+    // Disable back press
+    @Override
+    public void onBackPressed() {
     }
 }

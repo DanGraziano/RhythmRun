@@ -35,6 +35,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.security.Key;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -314,7 +316,7 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		// Start location updates
 		startLocationUpdates();
 	}
-	
+
 
 	private void updateMap(android.location.Location location) {
 		if (googleMap != null) {
@@ -551,13 +553,45 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 
 
 
-	private void updateRunsDB () {
+
+	private void updateRunsDB() {
 		// Replace "user_id" with the actual user ID you want to write data for
 		String userId = "PYa4qGj3EVXa29n5CpOtWoZlbDh2";
 		DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Runs");
 		String dbKey = reference.push().getKey();
-		reference.child("Users").child(dbKey).child("calories").setValue("1200000");
+		String averagePaceText;
+		// Calculate average pace
+		if (totalElapsedTime == 0 || totalDistance == 0){
+			Float averagePaceTime = 0.0F;
+			int paceMinutes = 0;
+			int paceSeconds = (int) ((averagePaceTime / 1000) % 60);
+			averagePaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+
+
+		}else {
+
+			long averagePaceTime = totalElapsedTime / (long) totalPaceDistance;
+			int paceMinutes = (int) (averagePaceTime / (60 * 1000));
+			int paceSeconds = (int) ((averagePaceTime / 1000) % 60);
+			averagePaceText = String.format(Locale.getDefault(), "%02d:%02d", paceMinutes, paceSeconds);
+
+		}
+
+		// Calculate cadence
+		double cadence = calculateCadence(stepCount, startTime, SystemClock.uptimeMillis());
+
+		// Calculate date
+		String currentDate = DateFormat.getDateTimeInstance().format(new Date());
+
+		reference.child(dbKey).child("cadenceTime").setValue(Double.toString(cadence));
+		reference.child(dbKey).child("calories").setValue("1200000"); // Update this value if needed
+		reference.child(dbKey).child("date").setValue(currentDate); // Set the current date
+		reference.child(dbKey).child("distance").setValue(String.format(Locale.getDefault(), "%.2f", totalDistance));
+		reference.child(dbKey).child("pace").setValue(averagePaceText);
+		reference.child(dbKey).child("time").setValue(currentTime.getText().toString());
 
 	}
+
+
 
 }

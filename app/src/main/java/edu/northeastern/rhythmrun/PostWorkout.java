@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class PostWorkout extends AppCompatActivity {
 	private TextView distanceData;
@@ -23,6 +25,8 @@ public class PostWorkout extends AppCompatActivity {
 	private TextView timeData;
 	private TextView paceData;
 	private TextView dateData;
+	private ImageView mapImage;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,8 @@ public class PostWorkout extends AppCompatActivity {
 		dateData = findViewById(R.id.dateData);
 		paceData = findViewById(R.id.paceData);
 		timeData = findViewById(R.id.timeData);
+		mapImage = findViewById(R.id.mapImageView);
+
 
 		FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -54,20 +60,27 @@ public class PostWorkout extends AppCompatActivity {
 				@Override
 				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 					if (dataSnapshot.exists()) {
-						// Fetch the run details from the snapshot
+						// Get data from DB
 						String date = String.valueOf(dataSnapshot.child("date").getValue());
 						String distance = dataSnapshot.child("distance").getValue() + " mi";
 						String avgCadence = dataSnapshot.child("avgCadence").getValue() + " spm";
 						String time = String.valueOf(dataSnapshot.child("time").getValue());
 						String avgPace = dataSnapshot.child("avgPace").getValue() + " /mi";
+						String mapImageUrl = String.valueOf(dataSnapshot.child("mapImageUrl").getValue());
 
-						// Populate your TextViews with retrieved data
+						// Add data from DB to TextViews
 						distanceData.setText(distance);
 						cadenceData.setText(avgCadence);
 						timeData.setText(time);
 						paceData.setText(avgPace);
 						dateData.setText(date);
+
+						// Load map image using Picasso
+						Picasso.get()
+								.load(mapImageUrl)
+								.into(mapImage);
 					}
+
 				}
 
 				@Override
@@ -76,11 +89,6 @@ public class PostWorkout extends AppCompatActivity {
 				}
 			});
 		}
-
-
-
-
-
 
 
 		// KEEP -- Used for floating action button on click

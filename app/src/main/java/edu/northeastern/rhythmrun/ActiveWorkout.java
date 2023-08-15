@@ -270,8 +270,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				String newValue = parent.getItemAtPosition(position).toString();
-				setBPM(newValue);
 				targetSPM.setText(newValue);
+				setBPM(newValue);
 				SPMSelector.setVisibility(View.GONE);
 			}
 			@Override
@@ -586,6 +586,8 @@ public class ActiveWorkout extends AppCompatActivity implements OnMapReadyCallba
 		playMetronomeThread.threadBpm = threadBPM;
 		metronome.on();
 		new Thread(playMetronomeThread).start();
+		metronomeOn = true;
+
 	}
 
 	private void metronomeOff(){

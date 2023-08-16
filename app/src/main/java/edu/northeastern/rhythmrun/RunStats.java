@@ -111,28 +111,6 @@ public class RunStats extends AppCompatActivity {
                 Toast.makeText(RunStats.this, "Failed to upload map image", Toast.LENGTH_SHORT).show();
             });
 
-            /*
-            // Create a HashMap to store the run data
-            HashMap<String, Object> runData = new HashMap<>();
-            runData.put("date", currentDate);
-            runData.put("distance", totalDistance);
-            runData.put("avgCadence", avgCadence);
-            runData.put("avgPace", avgPace);
-            runData.put("time", totalTime);
-
-            // Add the run data to the database
-            assert runId != null;
-            userRunsRef.child(runId).setValue(runData)
-                    .addOnSuccessListener(aVoid -> {
-                        // Data successfully added to the database
-                        Toast.makeText(RunStats.this, "Run data saved", Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Error occurred while adding data to the database
-                        Toast.makeText(RunStats.this, "Failed to save run data", Toast.LENGTH_SHORT).show();
-                    });
-
-             */
             Intent intent = new Intent(RunStats.this, Home.class);
             startActivity(intent);
         });

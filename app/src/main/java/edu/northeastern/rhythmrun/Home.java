@@ -153,7 +153,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibilityOneMile(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >=1 ) {
+			if (distanceInMiles >=1 && distanceInMiles < 3) {
 				oneMileRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -164,7 +164,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibilityHalfMarathon(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 13.1) {
+			if (distanceInMiles >= 13.1 && distanceInMiles < 50) {
 				halfMarathonRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -175,7 +175,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibility5K(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 3.1) {
+			if (distanceInMiles >= 3.1 && distanceInMiles < 6.2) {
 				fiveKRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {
@@ -186,7 +186,7 @@ public class Home extends AppCompatActivity {
 	public void checkAndSetBadgeVisibility10K(String distance) {
 		try {
 			double distanceInMiles = Double.parseDouble(distance);
-			if (distanceInMiles >= 6.2) {
+			if (distanceInMiles >= 6.2 && distanceInMiles < 13.1) {
 				tenKRun.setAlpha(1.0f);
 			}
 		} catch (NumberFormatException e) {

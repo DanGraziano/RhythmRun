@@ -119,19 +119,34 @@ public class EditProfile extends AppCompatActivity {
         userProfile.setHeight(editHeight.getText().toString());
         userProfile.setCadenceGoal((String) spinner.getSelectedItem());
 
+        String age = editAge.getText().toString();
+        String height = editHeight.getText().toString();
+        String weight = editWeight.getText().toString();
+        String goal = (String) spinner.getSelectedItem();
+
         // Update only the changed fields
         Map<String, Object> updates = new HashMap<>();
         if (!TextUtils.isEmpty(userProfile.getAge())) {
             updates.put("age", userProfile.getAge());
+            reference.child(userId).child("age").setValue(age);
+
         }
+        if (!TextUtils.isEmpty(goal)) {
+            reference.child(userId).child("cadenceGoal").setValue(goal);
+            Log.d("GOAL", goal);
+        }
+
         if (!TextUtils.isEmpty(userProfile.getWeight())) {
             updates.put("weight", userProfile.getWeight());
+            reference.child(userId).child("weight").setValue(weight);
         }
         if (!TextUtils.isEmpty(userProfile.getHeight())) {
             updates.put("height", userProfile.getHeight());
+            reference.child(userId).child("height").setValue(height);
         }
         if (!TextUtils.isEmpty(userProfile.getCadenceGoal())) {
             updates.put("cadenceGoal", userProfile.getCadenceGoal());
+            reference.child(userId).child("cadenceGoal").setValue(goal);
         }
     }
 

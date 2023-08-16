@@ -21,6 +21,8 @@
 
             <Button
                 android:id="@+id/logoutBtn"
+                style="@style/Widget.AppCompat.Button.Colored"
+                app:backgroundTint="#FF044CDD"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -192,6 +194,8 @@
             <Button
                 android:id="@+id/editProfileBtn"
                 android:layout_width="wrap_content"
+                style="@style/Widget.AppCompat.Button.Colored"
+                app:backgroundTint="#FF044CDD"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@id/textCadence"
